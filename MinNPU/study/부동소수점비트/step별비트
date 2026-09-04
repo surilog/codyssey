@@ -1,0 +1,61 @@
+import json
+
+# 1. JSON 데이터 로드
+with open('data.json', 'r', encoding='utf-8') as f:
+    json_data = json.load(f)
+
+pattern = json_data["patterns"]["size_5_1"]["input"]
+x_filter = json_data["filters"]["size_5"]["x"]
+cross_filter = json_data["filters"]["size_5"]["cross"]
+n = 5
+
+print("========================================================================================================================")
+print("  [size_5_1] Step별 원소 곱셈값(Term) + sum() C-level 수렴 vs loop() 오차 보존 대조")
+print("========================================================================================================================")
+
+# loop 연산용 누적 변수
+loop_x = 0.0
+loop_cross = 0.0
+
+# sum 시뮬레이션용 데이터
+x_terms = [x_filter[r][c] * pattern[r][c] for r in range(n) for c in range(n) if (x_filter[r][c] * pattern[r][c] != 0 or cross_filter[r][c] * pattern[r][c] != 0)]
+cross_terms = [cross_filter[r][c] * pattern[r][c] for r in range(n) for c in range(n) if (x_filter[r][c] * pattern[r][c] != 0 or cross_filter[r][c] * pattern[r][c] != 0)]
+
+step = 0
+for r in range(n):
+    for c in range(n):
+        vx = x_filter[r][c] * pattern[r][c]
+        vc = cross_filter[r][c] * pattern[r][c]
+        
+        if vx != 0 or vc != 0:
+            step += 1
+            # 1. loop() 누적 (파이썬 float 객체 레벨)
+            loop_x += vx
+            loop_cross += vc
+            
+            # 2. sum() 연속 누적 시뮬레이션 (C-level 파이프라인)
+            sum_x_sim = sum(x_terms[:step])
+            sum_cross_sim = sum(cross_terms[:step])
+
+            print(f" Step {step:02d} | 위치 ({r},{c})  ==>  [이번 Step 곱한값] Cross: {vc:.1f} | X: {vx:.1f}")
+            print(f" ├─ [loop()] 오차 보존  | Cross: {loop_cross:<18} ({loop_cross.hex()}) vs X: {loop_x:<18} ({loop_x.hex()})")
+            print(f" ├─ [sum() ] C-연속 누적 | Cross: {sum_cross_sim:<18} ({sum_cross_sim.hex()}) vs X: {sum_x_sim:<18} ({sum_x_sim.hex()})")
+            print(f" └─ 현재 비트 동점 여부   | loop(): {loop_cross.hex() == loop_x.hex()} | sum(): {sum_cross_sim.hex() == sum_x_sim.hex()}")
+            print("-" * 120)
+
+# 최종 실제 CPython sum() 및 loop() 비교
+real_sum_x = sum(x_filter[r][c] * pattern[r][c] for r in range(n) for c in range(n))
+real_sum_cross = sum(cross_filter[r][c] * pattern[r][c] for r in range(n) for c in range(n))
+
+print("\n========================================================================================================================")
+print(" 최종 결과 및 동점(UNDECIDED) 판정")
+print("========================================================================================================================")
+print(" [sum() 방식 - C-level 파이프라인]")
+print(f"  ├─ Cross 점수 : {real_sum_cross:<20} | Hex: {real_sum_cross.hex()}")
+print(f"  ├─ X     점수 : {real_sum_x:<20} | Hex: {real_sum_x.hex()}")
+print(f"  └─ 판정: 반올림 규칙에 의해 완벽히 수렴함 => {real_sum_cross.hex() == real_sum_x.hex()} ( UNDECIDED / FAIL)")
+print()
+print(" [loop() 방식 - 파이썬 오차 보존]")
+print(f"  ├─ Cross 점수 : {loop_cross:<20} | Hex: {loop_cross.hex()}")
+print(f"  ├─ X     점수 : {loop_x:<20} | Hex: {loop_x.hex()}")
+print(f"  └─ 판정: 미세 오차가 끝까지 보존되어 동점 해소 => {loop_cross.hex() == loop_x.hex()} (PASS)")
