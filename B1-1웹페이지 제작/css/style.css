@@ -35,7 +35,7 @@ body {
 header { /* 헤더 영역 기본 스타일 */
   background-color: var(--card-bg);
   border-bottom: 1px solid var(--border-color);
-  padding: 1rem 5rem;
+  padding: 1rem 1.5rem;
   
   /* Flexbox 적용: 로고와 메뉴를 양 끝으로 정렬 */
   display: flex;
