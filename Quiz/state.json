@@ -1,0 +1,113 @@
+{
+    "quizzes": [
+        {
+            "question": "다음 중 상대경로의 설명으로 적절한 것은?",
+            "choices": [
+                "현재 디렉토리에서 파일을 찾는 경로",
+                "루트 디렉토리에서 파일을 찾는 경로",
+                "절대 경로",
+                "고정된 경로"
+            ],
+            "answer": "현재 디렉토리에서 파일을 찾는 경로",
+            "hint": "자유롭다..."
+        },
+        {
+            "question": "바인드 마운트에 대한 설명으로 적절한 것은?",
+            "choices": [
+                "호스트의 디렉토리를 컨테이너에 연결하는 방식",
+                "정해진 위치에서만 데이터를 읽고 쓸 수 있는 방식",
+                "영속성이 없는 임시 저장 방식",
+                "컨테이너 내부에서만 데이터를 저장하는 방식"
+            ],
+            "answer": "호스트의 디렉토리를 컨테이너에 연결하는 방식",
+            "hint": "실시간 전송!"
+        },
+        {
+            "question": "다음 docker-compose.yml 파일에서의 depends_on 옵션의 역할은 무엇인가?\n\nversion: '3.8'\nservices:\n  web:\n    image: nginx:latest\n    depends_on:\n      - cache-redis\n      - db-postgres\n...",
+            "choices": [
+                "WEB 서비스가 시작되기 전에 cache-redis와 db-postgres 서비스가 먼저 시작되도록 보장한다.",
+                "WEB 서비스가 시작되기 전에 cache-redis와 db-postgres 서비스가 먼저 종료되도록 보장한다.",
+                "cache-redis와 db-postgres 서비스가 시작되기 전에 WEB 서비스가 먼저 시작되도록 보장한다.",
+                "WEB 서비스가 시작되기 전에 cache-redis와 db-postgres 서비스가 먼저 삭제되도록 보장한다."
+            ],
+            "answer": "WEB 서비스가 시작되기 전에 cache-redis와 db-postgres 서비스가 먼저 시작되도록 보장한다.",
+            "hint": "의존...은 후순위?"
+        },
+        {
+            "question": "다음 중 다운로드된 도커 이미지를 확인하는 명령어는?",
+            "choices": [
+                "docker image",
+                "docker ps",
+                "docker ps -a",
+                "docker images"
+            ],
+            "answer": "docker images",
+            "hint": "힌트가 제공되지 않는 문제입니다."
+        },
+        {
+            "question": "다음 프로그램의 결과로 알맞은 것은? \n\nclass Animal: def __init__(self, name, age): self.name = name\n       self.age = age\n      def say(self):\n        print(f\"안녕하세요. 제 이름은 {self.name}이고, 나이는 {self.age}살 입니다.\")\n\nclass Dog(Animal):\n        def __init__(self, name, age, breed):\n          super().__init__(name, age)\n          self.breed = breed\n        def say(self):\n          print(f\"안녕. 내 이름은 {self.name}이고, 나이는 {self.age}살!. 나는 {self.breed}!.\")\nwolf = Dog(\"늑대\", 3, \"허스키\")\nwolf.say()",
+            "choices": [
+                "안녕하세요. 제 이름은 늑대이고, 나이는 3살 입니다. 저는 허스키입니다.",
+                "안녕. 내 이름은 늑대이고, 나이는 3살!. 나는 허스키!.",
+                "안녕하세요. 제 이름은 늑대이고, 나이는 3살 입니다. 나는 허스키!.",
+                "안녕. 내 이름은 늑대이고, 나이는 3살!. 저는 허스키입니다."
+            ],
+            "answer": "안녕. 내 이름은 늑대이고, 나이는 3살!. 나는 허스키!.",
+            "hint": "상속"
+        },
+        {
+            "question": "다음 설명 중 틀린 것은?",
+            "choices": [
+                "shell은 사용자의 명령을 입력받아 커널이 이해할 수 있도록 번역해준다.",
+                "shell은 커널이 직접적인 위협으로부터 감싸주는 인터페이스다.",
+                "커널은 하드웨어(CPU,메모리)등을 직접 제어하고 관리하는 가장 핵심적인 제어 프로그램이다",
+                "허가받지 않은 사용자가 shell의 모든 기능을 사용 할 수 있게 하는 것은 바람직하다."
+            ],
+            "answer": "허가받지 않은 사용자가 shell의 모든 기능을 사용 할 수 있게 하는 것은 바람직하다.",
+            "hint": "쉘은 복숭아 씨 입니다. 커널이 복숭아 씨 안의 말랑한 부분이면 쉘은 그 위를 감싸는 복숭아 씨와 같습니다."
+        },
+        {
+            "question": "다음 중 터미널에 대해서 알맞지 않은 것은?",
+            "choices": [
+                "terminal이란 '끝' 이라는 의미로 사람의 명령이 입력되고 결과가 출력되는 최전선의 접점이라는 의미를 가지고 있다.",
+                "터미널이란 초창기에 글자만 입력하고 출력받을 수 있는 키보드와 모니터로 구성된 단말기를 의미했다",
+                "사용자가 입력한 명령어 문자열을 해석하여 커널이 이해할 수 있도록 해주는 역할을 한다.",
+                "사용자가 텍스트를 입력하고 컴퓨터의 실행결과를 돌려받는 입출력 통로 역할을 한다."
+            ],
+            "answer": "사용자가 입력한 명령어 문자열을 해석하여 커널이 이해할 수 있도록 해주는 역할을 한다.",
+            "hint": "커널의 기능과 헷갈리면 안됩니다!"
+        }
+    ],
+    "users": [
+        {
+            "username": "관리자",
+            "point": 11,
+            "best_score": 3,
+            "history": [
+                {
+                    "date": "2026-08-04 13:03:26",
+                    "total_questions": 3,
+                    "score": 2
+                },
+                {
+                    "date": "2026-08-04 13:04:47",
+                    "total_questions": 3,
+                    "score": 3
+                },
+                {
+                    "date": "2026-08-04 13:05:51",
+                    "total_questions": 3,
+                    "score": 3
+                }
+            ],
+            "created_at": "2026-08-04 13:01:32"
+        },
+        {
+            "username": "안녕하세요",
+            "point": 0,
+            "best_score": 0,
+            "history": [],
+            "created_at": "2026-08-04 15:35:28"
+        }
+    ]
+}
