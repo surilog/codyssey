@@ -70,9 +70,10 @@ nav a:hover { /* 마우스 오버 시 색상 변경, 즉 링크 연결(a태그) 
    3. 메인 레이아웃 및 영역별 스타일
    ========================================================================== */
 main {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  max-width: 900px;     /* 본문 콘텐츠의 최대 너비 지정 */
+  width: 100%;          /* 화면이 좁을 땐 100% 채움 */
+  margin: 0 auto;       /* 상하 0, 좌우 auto로 메인 전체를 중앙 배치 */
+  padding: 2rem 1.5rem; /* 본문 양옆 여백 추가 */
 }
 
 section { /* 각 섹션별 여백 기본 설정 */
@@ -88,19 +89,28 @@ section h2 { /* 섹션 태그 중 h2태그의 스타일 기본 설정 */
 }
 
 /* Hero & About */
+/* Hero 섹션 수정: 정렬을 flex-start(왼쪽) 및 left로 변경 */
 #hero {
-  text-align: center;
-  padding: 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 기존 center -> flex-start */
+  text-align: left;        /* 기존 center -> left */
+  padding: 3rem 0;
+  margin-bottom: 2rem;
 }
 
 #hero img {
   width: 150px;
   height: 150px;
-  border-radius: 50%; /* 이미지 동그랗게 처리 */
+  border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  display: block;
 }
 
+#hero h2 {
+  margin-bottom: 1rem;
+}
 /* ==========================================================================
    4. Grid를 활용한 Skills & Projects 카드 배치
    ========================================================================== */
