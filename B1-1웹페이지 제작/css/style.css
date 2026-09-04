@@ -238,7 +238,43 @@ footer {
   transform: translateY(0);
 }
 
+/* GitHub API 연동 프로젝트 카드 스타일 */
+.project-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+}
 
+.project-card h3 {
+  font-size: 1.2rem;
+  color: var(--primary-color);
+}
+
+.project-card .repo-info {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.project-card a {
+  display: inline-block;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.project-card a:hover {
+  text-decoration: underline;
+}
+
+/* 로딩 및 에러 스타일 */
+.loading, .empty, .error-box {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+}
 
 /* 부드러운 스크롤 */
 html {

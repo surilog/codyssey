@@ -70,3 +70,60 @@ document.addEventListener('DOMContentLoaded', () => {
     sectionObserver.observe(section);
   });
 });
+
+
+// ==========================================
+// 4. GitHub API 연동 (async/await & fetch)
+// ==========================================
+const GITHUB_USERNAME = 'surilog'; // 본인의 GitHub 아이디로 수정하세요.
+
+async function fetchGithubProjects() {
+  const projectListContainer = document.querySelector('#project-list');
+  if (!projectListContainer) return;
+
+  try {
+    // 1. GitHub API 호출 (사용자의 최근 6개 저장소 가져오기)
+    const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=6`);
+
+    // HTTP 응답 상태 체크
+    if (!response.ok) {
+      throw new Error(`HTTP 에러 발생! 상태 코드: ${response.status}`);
+    }
+
+    const repos = await response.json();
+
+    // 2. 받아온 데이터가 빈 배열인 경우 (빈 상태 처리)
+    if (repos.length === 0) {
+      projectListContainer.innerHTML = '<p class="empty">공개된 프로젝트 저장소가 없습니다.</p>';
+      return;
+    }
+
+    // 3. 데이터를 성공적으로 받아온 경우 (카드 생성 및 출력)
+    projectListContainer.innerHTML = repos.map(repo => `
+      <article class="project-card">
+        <h3>${repo.name}</h3>
+        <p>${repo.description ? repo.description : '프로젝트 설명이 없습니다.'}</p>
+        <div class="repo-info">
+          <span>⭐ ${repo.stargazers_count}</span>
+          <span>💻 ${repo.language || 'N/A'}</span>
+        </div>
+        <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer">GitHub 방문하기 →</a>
+      </article>
+    `).join('');
+
+  } catch (error) {
+    // 4. 에러 처리 (네트워크 오류, 잘못된 계정명 등)
+    console.error('GitHub API 연동 실패:', error);
+    projectListContainer.innerHTML = `
+      <div class="error-box">
+        <p>프로젝트를 불러오는데 실패했습니다.</p>
+        <button type="button" onclick="fetchGithubProjects()">다시 시도</button>
+      </div>
+    `;
+  }
+}
+
+// 페이지 로드 시 실행
+document.addEventListener('DOMContentLoaded', () => {
+  fetchGithubProjects();
+});
