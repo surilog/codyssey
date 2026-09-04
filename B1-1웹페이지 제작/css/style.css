@@ -200,3 +200,47 @@ footer {
     justify-content: space-between;/* 양 끝으로 배치 */
   }
 }
+/*js 동작 지원 스타일*/
+
+/* 다크모드 토글 버튼 스타일 */
+#theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 0.5rem 1rem;
+  z-index: 1000;
+}
+
+/* Scroll Top 버튼 스타일 */
+#scroll-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+#scroll-top.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 스크롤 애니메이션 (Fade-In) */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+
+/* 부드러운 스크롤 */
+html {
+  scroll-behavior: smooth;
+}

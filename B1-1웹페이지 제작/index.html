@@ -4,12 +4,14 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>나를 소개하는 웹 페이지</title>
-        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/style.css"> <!-- CSS 파일 연결 -->
     </head>
 
     <body>
         <!-- 상단 헤더 & 내비게이션 -->
         <header>
+            <!-- 다크 모드 버튼 (header 내부 등에 위치) -->
+            <button id="theme-toggle" type="button">🌓 테마 변경</button>
             <h1>나를 소개하는 웹 페이지</h1>
             <nav>
                 <ul>
@@ -27,7 +29,7 @@
             <!-- 1. Hero 영역 -->
             <section id="hero">
                 <h2>Hero</h2>
-                
+
 
                 <img src="images/profile.png" alt="개발자 프로필 이미지">
                 <p>환영합니다! 보안과 웹 기술을 공부하는 개발자 공간입니다.</p>
@@ -76,11 +78,15 @@
                     <button type="submit">보내기</button>
                 </form>
             </section>
+            <!-- 최상단 스크롤 버튼 (main 하단 등에 위치) -->
+            <button id="scroll-top" type="button">▲ TOP</button>
         </main>
 
         <!-- 하단 푸터 -->
         <footer>
             <p>&copy; 2026 나를 소개하는 웹 페이지. 모든 권리 보유.</p>
         </footer>
+        <script src="js/main.js"></script> <!-- 자바스크립트 파일 연결 -->
     </body>
+    
 </html>
