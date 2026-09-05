@@ -83,6 +83,7 @@ async function fetchGithubProjects() {
 
   try {
     // 1. GitHub API 호출 (사용자의 최근 6개 저장소 가져오기)
+    // [1. 로딩 중] -> HTML에 작성된 로딩 메시지가 노출되어 있는 상태
     const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=6`);
 
     // HTTP 응답 상태 체크
@@ -98,7 +99,7 @@ async function fetchGithubProjects() {
       return;
     }
 
-    // 3. 데이터를 성공적으로 받아온 경우 (카드 생성 및 출력)
+    // 3. 데이터를 성공적으로 받아온 경우 (카드 생성 및 출력) , HTML 카드로 덮어씌움
     projectListContainer.innerHTML = repos.map(repo => `
       <article class="project-card">
         <h3>${repo.name}</h3>
