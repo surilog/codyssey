@@ -1,3 +1,17 @@
+//추가 과제 Hero 타이핑 효과
+const typingText = document.querySelector('#typing-text');
+const textToType = "환영합니다! 보안과 웹 기술을 공부하는 개발자 공간입니다.";
+let index = 0;
+
+function typeEffect() {
+  if (typingText && index < textToType.length) {
+    typingText.textContent += textToType.charAt(index);
+    index++;
+    setTimeout(typeEffect, 80); // 속도 조절 (80ms)
+  }
+}
+typeEffect();
+
 // ==========================================
 // 1. DOM 요소 선택 및 이벤트 등록 기본
 // ==========================================
@@ -73,56 +87,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // ==========================================
-// 4. GitHub API 연동 (async/await & fetch)
+// 4. GitHub API 연동 (async/await & fetch) js/main.js (API 연동 + filter() 함수 작성)
 // ==========================================
 const GITHUB_USERNAME = 'surilog'; // 본인의 GitHub 아이디로 수정하세요.
 
-async function fetchGithubProjects() {
-  const projectListContainer = document.querySelector('#project-list');
-  if (!projectListContainer) return;
+let allProjects = []; // API로 원본 데이터를 받아올 전역 배열
 
+async function fetchGitHubRepos() {
+  const projectList = document.querySelector('#project-list');
   try {
-    // 1. GitHub API 호출 (사용자의 최근 6개 저장소 가져오기)
-    // [1. 로딩 중] -> HTML에 작성된 로딩 메시지가 노출되어 있는 상태
-    const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=6`);
-
-    // HTTP 응답 상태 체크
-    if (!response.ok) {
-      throw new Error(`HTTP 에러 발생! 상태 코드: ${response.status}`);
-    }
-
-    const repos = await response.json();
-
-    // 2. 받아온 데이터가 빈 배열인 경우 (빈 상태 처리)
-    if (repos.length === 0) {
-      projectListContainer.innerHTML = '<p class="empty">공개된 프로젝트 저장소가 없습니다.</p>';
-      return;
-    }
-
-    // 3. 데이터를 성공적으로 받아온 경우 (카드 생성 및 출력) , HTML 카드로 덮어씌움
-    projectListContainer.innerHTML = repos.map(repo => `
-      <article class="project-card">
-        <h3>${repo.name}</h3>
-        <p>${repo.description ? repo.description : '프로젝트 설명이 없습니다.'}</p>
-        <div class="repo-info">
-          <span>⭐ ${repo.stargazers_count}</span>
-          <span>💻 ${repo.language || 'N/A'}</span>
-        </div>
-        <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer">GitHub 방문하기 →</a>
-      </article>
-    `).join('');
-
-  } catch (error) {
-    // 4. 에러 처리 (네트워크 오류, 잘못된 계정명 등)
-    console.error('GitHub API 연동 실패:', error);
-    projectListContainer.innerHTML = `
-      <div class="error-box">
-        <p>프로젝트를 불러오는데 실패했습니다.</p>
-        <button type="button" onclick="fetchGithubProjects()">다시 시도</button>
-      </div>
-    `;
+    const response = await fetch(`https://api.github.com/users/surilog/repos`);
+    if (!response.ok) throw new Error('불러오기 실패');
+    
+    allProjects = await response.json(); // 원본 데이터 저장
+    renderProjects(allProjects); // 전체 카드 렌더링
+  } catch (err) {
+    projectList.innerHTML = `<p class="error-box">데이터를 불러오지 못했습니다.</p>`;
   }
 }
+
+// 프로젝트 카드 렌더링 함수
+function renderProjects(projects) {
+  const projectList = document.querySelector('#project-list');
+  
+  if (projects.length === 0) {
+    projectList.innerHTML = `<p class="empty">해당 언어의 프로젝트가 없습니다.</p>`;
+    return;
+  }
+
+  projectList.innerHTML = projects.map(repo => `
+    <div class="project-card">
+      <h3>${repo.name}</h3>
+      <div class="repo-info">
+        <span>⭐ ${repo.stargazers_count}</span>
+        <span>💻 ${repo.language || 'N/A'}</span>
+      </div>
+      <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer">GitHub 방문하기 →</a>
+    </div>
+  `).join('');
+}
+
+// 필터링 버튼 클릭 이벤트 처리 (Array.prototype.filter 사용)
+const filterButtons = document.querySelectorAll('.filter-btn');
+filterButtons.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    filterButtons.forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+
+    const selectedLang = e.target.dataset.lang;
+
+    if (selectedLang === 'all') {
+      renderProjects(allProjects);
+    } else {
+      // array.filter() 핵심 사용 구문
+      const filtered = allProjects.filter(repo => repo.language === selectedLang);
+      renderProjects(filtered);
+    }
+  });
+});
+
+fetchGitHubRepos();
 
 // 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', () => {
@@ -146,66 +170,55 @@ const contactForm = document.querySelector('#contact-form');
 
 if (contactForm) {
   contactForm.addEventListener('submit', (e) => {
-    e.preventDefault(); // 기본 폼 제출(페이지 새로고침) 방지
+    e.preventDefault(); // 기본 페이지 새로고침 방지
 
-    // 1. DOM 요소 가져오기
+    // 1. 유효성 검사 로직 (기존 작성 코드 유지)
     const nameInput = document.querySelector('#name');
     const emailInput = document.querySelector('#email');
     const messageInput = document.querySelector('#message');
-
-    const nameError = document.querySelector('#name-error');
-    const emailError = document.querySelector('#email-error');
-    const messageError = document.querySelector('#message-error');
     const successMsg = document.querySelector('#form-success');
 
-    // 2. 상태(Errors) 객체 정의 (초기화)
-    const errors = {
-      name: '',
-      email: '',
-      message: ''
-    };
-
-    // 성공 메시지 초기화
-    successMsg.textContent = '';
-
-    // 3. 유효성 검사 규칙 (상태 데이터 업데이트)
-    // 이름 검증
-    if (!nameInput.value.trim()) {
-      errors.name = '이름을 입력해 주세요.';
-    }
-
-    // 이메일 검증 (정규표현식)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailInput.value.trim()) {
-      errors.email = '이메일을 입력해 주세요.';
-    } else if (!emailRegex.test(emailInput.value.trim())) {
-      errors.email = '올바른 이메일 형식이 아닙니다. (예: user@domain.com)';
+    let isValid = true;
+
+    // 간단한 유효성 체크 예시
+    if (!nameInput.value.trim() || !emailRegex.test(emailInput.value.trim()) || !messageInput.value.trim()) {
+      isValid = false;
     }
 
-    // 메시지 검증
-    if (!messageInput.value.trim()) {
-      errors.message = '메시지 내용을 입력해 주세요.';
-    }
-
-    // 4. DOM 업데이트 (상태 객체 기반 UI 반영)
-    // 이름 UI 업데이트
-    nameError.textContent = errors.name;
-    nameInput.classList.toggle('invalid', Boolean(errors.name));
-
-    // 이메일 UI 업데이트
-    emailError.textContent = errors.email;
-    emailInput.classList.toggle('invalid', Boolean(errors.email));
-
-    // 메시지 UI 업데이트
-    messageError.textContent = errors.message;
-    messageInput.classList.toggle('invalid', Boolean(errors.message));
-
-    // 5. 에러가 하나도 없는 경우 제출 성공 처리
-    const isValid = !errors.name && !errors.email && !errors.message;
-    
+    // 2. 유효성 검사 성공 시 실제 메일 전송 (Formspree 비동기 요청)
     if (isValid) {
-      successMsg.textContent = ' 성공적으로 메시지가 전송되었습니다!';
-      contactForm.reset(); // 입력 폼 초기화
+      // 로딩 상태 표시
+      successMsg.style.color = '#0066cc';
+      successMsg.textContent = '메일을 전송 중입니다...';
+
+      // 폼 데이터 객체 생성
+      const formData = new FormData(contactForm);
+
+      // Fetch API를 활용한 HTTP POST 요청
+      fetch(contactForm.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json' // Formspree에 JSON 응답을 요청
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          // 전송 성공 UI 업데이트
+          successMsg.style.color = '#52c41a';
+          successMsg.textContent = '🎉 성공적으로 메시지가 실제 이메일로 전송되었습니다!';
+          contactForm.reset(); // 입력 폼 초기화
+        } else {
+          // 서버 응답 에러 처리
+          throw new Error('전송 실패');
+        }
+      })
+      .catch(error => {
+        // 네트워크 또는 에러 발생 시 UI 업데이트
+        successMsg.style.color = '#ff4d4f';
+        successMsg.textContent = '메일 전송 중 오류가 발생했습니다. 다시 시도해 주세요.';
+      });
     }
   });
 }

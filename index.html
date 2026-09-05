@@ -40,7 +40,7 @@
             <section id="hero">
                 <h2>Hero</h2>
                 <img src="images/profile.png" alt="개발자 프로필 이미지">
-                <p>환영합니다! 보안과 웹 기술을 공부하는 개발자 공간입니다.</p>
+                <p><span id="typing-text"></span><span class="cursor">|</span></p>
             </section>
 
             <!-- 2. About 영역 -->
@@ -65,7 +65,12 @@
             <!-- 4. Projects 영역 -->
             <section id="projects">
                 <h2>Projects</h2>
-                <!-- JS에서 동적으로 카드를 넣을 컨테이너 -->
+                <div id="filter-buttons" style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="filter-btn active" data-lang="all">전체</button>
+                    <button class="filter-btn" data-lang="JavaScript">JavaScript</button>
+                    <button class="filter-btn" data-lang="Python">Python</button>
+                    <button class="filter-btn" data-lang="HTML">HTML/CSS</button>
+                </div>
                 <div id="project-list" class="project-grid">
                     <p class="loading">저장소 데이터를 불러오는 중입니다...</p>
                 </div>
@@ -74,9 +79,10 @@
             <!-- 5. Contact 영역 -->
             <section id="contact">
                 <h2>Contact</h2>
-                <form id="contact-form" novalidate>
+                <form id="contact-form" action="https://formspree.io/f/xgaezqgq" method="POST" novalidate>
                     <div>
                         <label for="name">이름</label>
+                        <!-- Formspree는 name 속성을 기준으로 메일 본문을 생성합니다 -->
                         <input type="text" id="name" name="name" placeholder="이름을 입력하세요">
                         <span class="error-msg" id="name-error"></span>
                     </div>
