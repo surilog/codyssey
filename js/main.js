@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const observerOptions = {
     root: null,
-    threshold: 0.15
+    threshold: 0.2
   };
 
   const sectionObserver = new IntersectionObserver((entries, observer) => {

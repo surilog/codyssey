@@ -52,9 +52,9 @@ header {
   background-color: var(--card-bg);
   border-bottom: 1px solid var(--border-color);
   padding: 1rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: flex;/* 1차원(가로) 레이아웃 선언 */
+  justify-content: space-between; /* 양 끝 정렬: 로고는 맨 왼쪽, 메뉴는 맨 오른쪽 */
+  align-items: center;/* 수직 중앙 정렬 */
   z-index: 1000; /* 본문보다 위에 뜨도록 설정 */
 }
 
@@ -197,8 +197,10 @@ section h2 {
 
 /* Projects 그리드 레이아웃 */
 .project-grid {
-  display: grid;
+  display: grid; /* 2차원(행과 열) 레이아웃 선언 */
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* 250px 이상 자동 줄바꿈 */
+  /* 각 카드의 최소 너비를 250px로 고정하고, 공간이 남으면 남은 비율(1fr)만큼 등분하여 채웁니다. */
+  /* auto-fit: : 화면 폭이 넓어지면 열 개수를 알아서 늘리고, 화면이 좁아지면(250px 이하로 떨어지기 전에) 자동으로 카드를 아래 줄로 떨어뜨려 줄바꿈 */
   gap: 1.5rem;
   width: 100%;
 }
