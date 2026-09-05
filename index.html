@@ -8,13 +8,20 @@
     </head>
 
     <body>
-        <!-- 상단 헤더 & 내비게이션 -->
+        <!-- 상단 헤더 & 내비게이션 (중첩 태그 및 중복 nav 제거) -->
         <header>
-            <!-- 다크 모드 버튼 (header 내부 등에 위치) -->
-            <button id="theme-toggle" type="button">🌓 테마 변경</button>
-            <h1>나를 소개하는 웹 페이지</h1>
+            <h1><a href="#">Portfolio</a></h1>
+
+            <!-- 햄버거 버튼 (모바일 전용) -->
+            <button id="hamburger-btn" aria-label="메뉴 열기">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <!-- 내비게이션 메뉴 -->
             <nav>
-                <ul>
+                <ul id="nav-menu">
                     <li><a href="#hero">Hero</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#skills">Skills</a></li>
@@ -22,6 +29,9 @@
                     <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav> 
+
+            <!-- 다크 모드 버튼 -->
+            <button id="theme-toggle" type="button">🌓 테마 변경</button>
         </header>
 
         <!-- 본문 영역 -->
@@ -29,8 +39,6 @@
             <!-- 1. Hero 영역 -->
             <section id="hero">
                 <h2>Hero</h2>
-
-
                 <img src="images/profile.png" alt="개발자 프로필 이미지">
                 <p>환영합니다! 보안과 웹 기술을 공부하는 개발자 공간입니다.</p>
             </section>
@@ -39,6 +47,8 @@
             <section id="about">
                 <h2>About</h2>
                 <p>저는 웹과 리버싱 보안 분야를 집중적으로 탐구하고 있는 학생입니다.</p>
+                <p>워게임등 다양한 보안 관련 프로젝트를 진행하며, 웹 개발과 리버싱 분야에 관심이 많습니다.</p>
+                <p>관련 내용들은 <a href="https://surilog.github.io/" target="_blank" rel="noopener noreferrer">Personal Blog</a>에서 확인할 수 있습니다.</p>
             </section>
 
             <!-- 3. Skills 영역 -->
@@ -61,24 +71,34 @@
                 </div>
             </section>
 
-            <!-- 5. Contact 영역 (폼 요소 적용) -->
+            <!-- 5. Contact 영역 -->
             <section id="contact">
                 <h2>Contact</h2>
-                <p>이메일: jamgyang@gmail.com</p>
-                
-                <form action="#" method="post">
+                <form id="contact-form" novalidate>
                     <div>
-                        <label for="user-email">보내는 사람 이메일:</label>
-                        <input type="email" id="user-email" name="email" placeholder="example@email.com" required>
+                        <label for="name">이름</label>
+                        <input type="text" id="name" name="name" placeholder="이름을 입력하세요">
+                        <span class="error-msg" id="name-error"></span>
                     </div>
+
                     <div>
-                        <label for="user-message">문의 내용:</label>
-                        <textarea id="user-message" name="message" rows="4" placeholder="메시지를 입력하세요" required></textarea>
+                        <label for="email">이메일</label>
+                        <input type="email" id="email" name="email" placeholder="example@email.com">
+                        <span class="error-msg" id="email-error"></span>
                     </div>
+
+                    <div>
+                        <label for="message">메시지</label>
+                        <textarea id="message" name="message" rows="5" placeholder="메시지를 입력하세요"></textarea>
+                        <span class="error-msg" id="message-error"></span>
+                    </div>
+
                     <button type="submit">보내기</button>
+                    <div id="form-success" class="success-msg"></div>
                 </form>
             </section>
-            <!-- 최상단 스크롤 버튼 (main 하단 등에 위치) -->
+
+            <!-- 최상단 스크롤 버튼 -->
             <button id="scroll-top" type="button">▲ TOP</button>
         </main>
 
@@ -86,7 +106,7 @@
         <footer>
             <p>&copy; 2026 나를 소개하는 웹 페이지. 모든 권리 보유.</p>
         </footer>
-        <script src="js/main.js"></script> <!-- 자바스크립트 파일 연결 -->
+
+        <script src="js/main.js" defer></script> <!-- 자바스크립트 파일 연결 (defer 추가) -->
     </body>
-    
 </html>

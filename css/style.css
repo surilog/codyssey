@@ -1,6 +1,7 @@
-/*1. CSS 변수 설정 & 기본 리셋*/
+/* ==========================================================================
+   1. CSS 변수 설정 & 기본 리셋
+   ========================================================================== */
 :root {
-  /* 컬러 팔레트 변수 정의 */
   --bg-color: #ffffff;
   --text-color: #333333;
   --primary-color: #0066cc;
@@ -8,7 +9,6 @@
   --border-color: #e0e0e0;
 }
 
-/* 다크 모드 속성 (3단계 자바스크립트 연동 대비) */
 [data-theme="dark"] {
   --bg-color: #121212;
   --text-color: #f5f5f5;
@@ -17,11 +17,14 @@
   --border-color: #333333;
 }
 
-/* 여백 초기화 및 기본 스타일 설정 */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -29,58 +32,126 @@ body {
   color: var(--text-color);
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
   line-height: 1.6;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden; /* 가로 스크롤 잘림 및 깨짐 방지 */
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center;
 }
 
-/* 2. Flexbox를 활용한 헤더 & 내비게이션 정렬 */
-header { /* 헤더 영역 기본 스타일 */
+/* ==========================================================================
+   2. 헤더 & 내비게이션 (반응형 기준점 수정)
+   ========================================================================== */
+header {
+  position: sticky; /* 스크롤 시 상단 고정 */
+  top: 0;
+  left: 0;
+  width: 100%;
   background-color: var(--card-bg);
   border-bottom: 1px solid var(--border-color);
   padding: 1rem 1.5rem;
-  
-  /* Flexbox 적용: 로고와 메뉴를 양 끝으로 정렬 */
   display: flex;
-  flex-direction: column; /* 모바일 First: 세로 정렬 */
+  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  z-index: 1000; /* 본문보다 위에 뜨도록 설정 */
 }
 
-header h1 { /* 헤더의 h1 태그 기본 스타일 설정 */
-  font-size: 1rem;
+/* 스크롤 60px 이상 내렸을 때 적용되는 스타일 (요구사항) */
+header.scrolled {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+header h1 a {
+  font-size: 1.2rem;
   color: var(--primary-color);
+  text-decoration: none;
+  font-weight: bold;
 }
 
-nav ul { /* ul : 순서 없는 리스트 ==> skils 섹션이 가로로 나올꺼임 */
-  display: flex; /* 메뉴 항목들을 가로로 나열 */
+/* PC/태블릿 기본 내비게이션 */
+nav ul {
+  display: flex;
   list-style: none;
   gap: 1.5rem;
+  align-items: center;
 }
 
-nav a { /*네비게이션바 안에 있는 링크*/
+nav a {
   color: var(--text-color);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
 }
 
-nav a:hover { /* 마우스 오버 시 색상 변경, 즉 링크 연결(a태그) 가능시 색상 변경 */
+nav a:hover {
   color: var(--primary-color);
 }
 
+/* 햄버거 버튼 (기본 PC에서는 숨김) */
+#hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 25px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+#hamburger-btn span {
+  width: 100%;
+  height: 3px;
+  background-color: var(--text-color);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* 모바일 브레이크포인트 (767px 이하) */
+@media (max-width: 767px) {
+  #hamburger-btn {
+    display: flex; /* 모바일에서 햄버거 노출 */
+  }
+
+  nav ul {
+    display: none; /* 기본 숨김 */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--card-bg);
+    flex-direction: column;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  /* JavaScript classList.toggle('active') 연동 */
+  nav ul.active {
+    display: flex;
+  }
+}
+
 /* ==========================================================================
-   3. 메인 레이아웃 및 영역별 스타일
+   3. 메인 레이아웃 및 본문 섹션
    ========================================================================== */
 main {
-  max-width: 900px;     /* 본문 콘텐츠의 최대 너비 지정 */
-  width: 100%;          /* 화면이 좁을 땐 100% 채움 */
-  margin: 0 auto;       /* 상하 0, 좌우 auto로 메인 전체를 중앙 배치 */
-  padding: 2rem 1.5rem; /* 본문 양옆 여백 추가 */
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto; /* 중앙 정렬 */
+  padding: 2rem 1.5rem;
 }
 
-section { /* 각 섹션별 여백 기본 설정 */
+section {
   margin-bottom: 4rem;
+  width: 100%;
 }
 
-section h2 { /* 섹션 태그 중 h2태그의 스타일 기본 설정 */
+section h2 {
   font-size: 1.8rem;
   margin-bottom: 1.5rem;
   border-bottom: 2px solid var(--primary-color);
@@ -88,15 +159,13 @@ section h2 { /* 섹션 태그 중 h2태그의 스타일 기본 설정 */
   padding-bottom: 0.3rem;
 }
 
-/* Hero & About */
-/* Hero 섹션 수정: 정렬을 flex-start(왼쪽) 및 left로 변경 */
+/* Hero 섹션 */
 #hero {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* 기존 center -> flex-start */
-  text-align: left;        /* 기존 center -> left */
-  padding: 3rem 0;
-  margin-bottom: 2rem;
+  align-items: flex-start;
+  text-align: left;
+  padding: 2rem 0;
 }
 
 #hero img {
@@ -105,16 +174,11 @@ section h2 { /* 섹션 태그 중 h2태그의 스타일 기본 설정 */
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 1.5rem;
-  display: block;
 }
 
-#hero h2 {
-  margin-bottom: 1rem;
-}
 /* ==========================================================================
-   4. Grid를 활용한 Skills & Projects 카드 배치
+   4. Grid 활용 Skills & Projects
    ========================================================================== */
-/* Skills 리스트 Grid */
 #skills ul {
   list-style: none;
   display: grid;
@@ -131,12 +195,12 @@ section h2 { /* 섹션 태그 중 h2태그의 스타일 기본 설정 */
   font-weight: bold;
 }
 
-/* Projects 카드 그리드 */
+/* Projects 그리드 레이아웃 */
 .project-grid {
   display: grid;
-  /* 화면 크기에 맞춰 최소 250px 넓이의 카드가 자동으로 줄바꿈 처리됨 */
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* 250px 이상 자동 줄바꿈 */
   gap: 1.5rem;
+  width: 100%;
 }
 
 .project-card {
@@ -144,30 +208,86 @@ section h2 { /* 섹션 태그 중 h2태그의 스타일 기본 설정 */
   border: 1px solid var(--border-color);
   padding: 1.5rem;
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.project-card h3 {
+  font-size: 1.2rem;
+  color: var(--primary-color);
+}
+
+.project-card .repo-info {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  opacity: 0.8;
+}
+
+.project-card a {
+  display: inline-block;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.project-card a:hover {
+  text-decoration: underline;
+}
+
+/* UI 상태용 (로딩, 에러, 빈 상태) */
+.loading, .empty, .error-box {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
 }
 
 /* ==========================================================================
-   5. Contact 폼 스타일
+   5. Contact 폼
    ========================================================================== */
 form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   max-width: 500px;
+  width: 100%;
 }
 
 form div {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.3rem;
 }
 
 input, textarea {
+  width: 100%;
   padding: 0.8rem;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   background-color: var(--bg-color);
   color: var(--text-color);
+}
+
+input.invalid, textarea.invalid {
+  border-color: #ff4d4f !important;
+  outline: none;
+}
+
+.error-msg {
+  color: #ff4d4f;
+  font-size: 0.85rem;
+  min-height: 1.2rem;
+}
+
+.success-msg {
+  color: #52c41a;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 1rem;
 }
 
 button {
@@ -189,29 +309,25 @@ footer {
   padding: 2rem;
   background-color: var(--card-bg);
   border-top: 1px solid var(--border-color);
+  width: 100%;
 }
 
 /* ==========================================================================
-   6. 반응형 미디어 쿼리 (768px 이상 PC/태블릿)
+   6. JS 연동 유틸리티 스타일 (다크모드 버튼, 스크롤 탑, 애니메이션)
    ========================================================================== */
-@media (min-width: 768px) { /* 기존 모바일 화면고 달리 화면 폭이 768px 이상일 때 스타일을 덮어씌워 반영 */
-  header {
-    flex-direction: row; /* PC 화면에서는 제목과 메뉴를 위 아래가 아닌 가로로 배치 */
-    justify-content: space-between;/* 양 끝으로 배치 */
-  }
-}
-/*js 동작 지원 스타일*/
-
-/* 다크모드 토글 버튼 스타일 */
 #theme-toggle {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  padding: 0.5rem 1rem;
-  z-index: 1000;
+  top: 15px;
+  right: 15px;
+  padding: 0.4rem 0.8rem;
+  z-index: 1001;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  cursor: pointer;
 }
 
-/* Scroll Top 버튼 스타일 */
 #scroll-top {
   position: fixed;
   bottom: 30px;
@@ -219,6 +335,7 @@ footer {
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
+  z-index: 1000;
 }
 
 #scroll-top.show {
@@ -226,7 +343,6 @@ footer {
   visibility: visible;
 }
 
-/* 스크롤 애니메이션 (Fade-In) */
 .fade-in {
   opacity: 0;
   transform: translateY(30px);
@@ -236,47 +352,4 @@ footer {
 .fade-in.visible {
   opacity: 1;
   transform: translateY(0);
-}
-
-/* GitHub API 연동 프로젝트 카드 스타일 */
-.project-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.project-card h3 {
-  font-size: 1.2rem;
-  color: var(--primary-color);
-}
-
-.project-card .repo-info {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.project-card a {
-  display: inline-block;
-  color: var(--primary-color);
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.project-card a:hover {
-  text-decoration: underline;
-}
-
-/* 로딩 및 에러 스타일 */
-.loading, .empty, .error-box {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 2rem;
-}
-
-/* 부드러운 스크롤 */
-html {
-  scroll-behavior: smooth;
 }

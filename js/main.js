@@ -128,3 +128,106 @@ async function fetchGithubProjects() {
 document.addEventListener('DOMContentLoaded', () => {
   fetchGithubProjects();
 });
+
+// 1. 내비게이션 스티키 (스크롤 60px)
+const header = document.querySelector('header');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 60) {
+    header?.classList.add('scrolled');
+  } else {
+    header?.classList.remove('scrolled');
+  }
+});
+
+// ==========================================
+// Contact 폼 유효성 검사 (이벤트 -> 상태 -> DOM 업데이트)
+// ==========================================
+const contactForm = document.querySelector('#contact-form');
+
+if (contactForm) {
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault(); // 기본 폼 제출(페이지 새로고침) 방지
+
+    // 1. DOM 요소 가져오기
+    const nameInput = document.querySelector('#name');
+    const emailInput = document.querySelector('#email');
+    const messageInput = document.querySelector('#message');
+
+    const nameError = document.querySelector('#name-error');
+    const emailError = document.querySelector('#email-error');
+    const messageError = document.querySelector('#message-error');
+    const successMsg = document.querySelector('#form-success');
+
+    // 2. 상태(Errors) 객체 정의 (초기화)
+    const errors = {
+      name: '',
+      email: '',
+      message: ''
+    };
+
+    // 성공 메시지 초기화
+    successMsg.textContent = '';
+
+    // 3. 유효성 검사 규칙 (상태 데이터 업데이트)
+    // 이름 검증
+    if (!nameInput.value.trim()) {
+      errors.name = '이름을 입력해 주세요.';
+    }
+
+    // 이메일 검증 (정규표현식)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailInput.value.trim()) {
+      errors.email = '이메일을 입력해 주세요.';
+    } else if (!emailRegex.test(emailInput.value.trim())) {
+      errors.email = '올바른 이메일 형식이 아닙니다. (예: user@domain.com)';
+    }
+
+    // 메시지 검증
+    if (!messageInput.value.trim()) {
+      errors.message = '메시지 내용을 입력해 주세요.';
+    }
+
+    // 4. DOM 업데이트 (상태 객체 기반 UI 반영)
+    // 이름 UI 업데이트
+    nameError.textContent = errors.name;
+    nameInput.classList.toggle('invalid', Boolean(errors.name));
+
+    // 이메일 UI 업데이트
+    emailError.textContent = errors.email;
+    emailInput.classList.toggle('invalid', Boolean(errors.email));
+
+    // 메시지 UI 업데이트
+    messageError.textContent = errors.message;
+    messageInput.classList.toggle('invalid', Boolean(errors.message));
+
+    // 5. 에러가 하나도 없는 경우 제출 성공 처리
+    const isValid = !errors.name && !errors.email && !errors.message;
+    
+    if (isValid) {
+      successMsg.textContent = ' 성공적으로 메시지가 전송되었습니다!';
+      contactForm.reset(); // 입력 폼 초기화
+    }
+  });
+}
+
+
+// ==========================================
+// 햄버거 메뉴 토글 (모바일)
+// ==========================================
+const hamburgerBtn = document.querySelector('#hamburger-btn');
+const navMenu = document.querySelector('#nav-menu');
+
+if (hamburgerBtn && navMenu) {
+  // 1. 햄버거 버튼 클릭 시 active 클래스 토글
+  hamburgerBtn.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+  });
+
+  // 2. 모바일 메뉴의 링크를 클릭하면 메뉴창 닫기
+  const navLinks = navMenu.querySelectorAll('a');
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      navMenu.classList.remove('active');
+    });
+  });
+}
