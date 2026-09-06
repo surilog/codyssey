@@ -118,6 +118,8 @@ function renderProjects(projects) {
   projectList.innerHTML = projects.map(repo => `
     <div class="project-card">
       <h3>${repo.name}</h3>
+      <!-- 🎯 [XSS 검증용] description 필드 출력 추가 -->
+      <p>${repo.description || '설명 없음'}</p>
       <div class="repo-info">
         <span>⭐ ${repo.stargazers_count}</span>
         <span>💻 ${repo.language || 'N/A'}</span>
@@ -171,7 +173,7 @@ const contactForm = document.querySelector('#contact-form');
 if (contactForm) {
   contactForm.addEventListener('submit', (e) => {
     e.preventDefault(); // 기본 페이지 새로고침 방지 ==> 비동기 요청으로 처리중인 데이터를 유지하기 위해 preventDefault() 사용
-  
+  //
 
     // 1. 유효성 검사 로직 (기존 작성 코드 유지)
     const nameInput = document.querySelector('#name');
