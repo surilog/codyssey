@@ -111,9 +111,37 @@ function renderProjects(projects) {
   const projectList = document.querySelector('#project-list');
   
   if (projects.length === 0) {
-    projectList.innerHTML = `<p class="empty">해당 언어의 프로젝트가 없습니다.</p>`;
+    projectList.innerHTML = ``; //기존 영역 초기화
     return;
   }
+  projects.forEach(repo => {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+
+    const h3 = document.createElement('h3');
+    h3.textContent = repo.name; // textContent 적용
+
+    //  [핵심 방어 지점] description을 textContent로 이스케이프 처리
+    const desc = document.createElement('p');
+    desc.textContent = repo.description || '설명 없음';
+
+    const info = document.createElement('div');
+    info.className = 'repo-info';
+    info.textContent = `⭐ ${repo.stargazers_count} | 💻 ${repo.language || 'N/A'}`;
+
+    const link = document.createElement('a');
+    link.href = repo.html_url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'GitHub 방문하기 →';
+
+    card.appendChild(h3);
+    card.appendChild(desc);
+    card.appendChild(info);
+    card.appendChild(link);
+
+    projectList.appendChild(card);
+  });
 
   projectList.innerHTML = projects.map(repo => `
     <div class="project-card">
