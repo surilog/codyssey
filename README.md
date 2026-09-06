@@ -18,15 +18,13 @@
 | 메인 화면 (다크모드) | 프로젝트 카드 (GitHub API) |
 | --- | --- |
 | <div style="text-align: center; margin: 20px 0;">
-  <img src="{{ '/images/main.jpg' | relative_url }}" 
-       alt="메인 화면 (다크모드)" 
-       style="max-width: 80%; height: auto; border: 1px solid #ddd; border-radius: 5px;">
-  <p style="font-size: 0.9em; color: #666;">[메인 화면 (다크모드)]</p>
-</div> |  <img src="{{ '/images/project.jpg' | relative_url }}" 
-       alt="프로젝트 카드 (GitHub API) 화면" 
-       style="max-width: 80%; height: auto; border: 1px solid #ddd; border-radius: 5px;">
-  <p style="font-size: 0.9em; color: #666;">[프로젝트 카드 (GitHub API) 화면]</p>
-</div> |
+
+
+<img src="./images/main.png" alt="메인 화면 (다크모드)">
+
+<img src="./images/project.png" alt="프로젝트 카드 (GitHub API) 화면">
+
+
 
 ---
 
