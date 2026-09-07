@@ -5,6 +5,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>나를 소개하는 웹 페이지</title>
         <link rel="stylesheet" href="css/style.css"> <!-- CSS 파일 연결 -->
+        <meta http-equiv="Content-Security-Policy" 
+        content="default-src 'self'; 
+                script-src 'self' [https://api.github.com](https://api.github.com); 
+                style-src 'self' 'unsafe-inline'; 
+                connect-src 'self' [https://api.github.com](https://api.github.com) [https://formspree.io](https://formspree.io); 
+                img-src 'self' data: https:;">
     </head>
 
     <body>
