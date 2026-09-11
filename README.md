@@ -229,6 +229,23 @@ API 전송: supabase.from('items').insert([formData])를 호출해 원격 DB에 
 3. **성공적인 성능 최적화 (`React.memo`)**
    - `Card.jsx` 컴포넌트에 `React.memo`를 적용하여 부모 컴포넌트 렌더링 시 전달되는 `props`가 변경되지 않았다면 자식 컴포넌트의 불필요한 리렌더링을 차단.
 ---
+---
+
+##  [Dev Retrospective] Vanilla JS vs React (BookHub 프로젝트를 통해 느낀 차이점)
+
+순수 HTML/CSS/JS만으로 개발했을 때와 비교하여, React 기반으로 SPA를 구축하며 체감한 핵심적 차이점과 이점입니다.
+
+### 1. UI의 모듈화와 재사용성 (Header 및 Card 컴포넌트)
+* **Vanilla JS**: 모든 HTML 파일마다 동일한 `<header>` 태그 코드를 복사-붙여넣기해야 했습니다. 헤더 메뉴나 디자인이 바뀌면 10개, 20개의 HTML 파일을 일일이 찾아서 수정해야 하는 번거로움이 있었습니다.
+* **React**: `<Header />`와 `<Layout />`을 하나의 공통 컴포넌트로 분리하고 React Router의 `<Outlet />`을 적용했습니다. 이제 **`Header.jsx` 파일 한 곳만 수정하면 애플리케이션 전체 페이지에 즉시 반영**되어 유지보수 생산성이 극대화되었습니다.
+
+### 2. 선언적 UI 렌더링 vs 직접적인 DOM 조작
+* **Vanilla JS**: DB에서 데이터를 받아오면 `document.createElement()`, `querySelector()`, `innerHTML` 등을 사용해 개발자가 직접 DOM 요소를 붙이고, 삭제하고, 변경해야 했습니다. (어디서 DOM을 건드렸는지 추적이 어려움)
+* **React**: 데이터의 상태(`items` State)만 변경해주면, React가 감지하여 화면(`Card` 컴포넌트)을 **선언적으로 자동 업데이트**해 줍니다. 데이터만 관리하면 되므로 DOM 조작 시 발생하는 버그가 획기적으로 줄었습니다.
+
+### 3. 단방향 데이터 흐름과 상태 관리 (State & Props)
+* **Vanilla JS**: 화면 간 데이터를 전달하려면 URL Query String을 복잡하게 파싱하거나 `localStorage`에 의존해야 했으며, 로그인 상태 관리가 파편화되었습니다.
+* **React**: `AuthContext`로 전역 인증 상태를 중앙 집중 관리하고, 부모 컴포넌트에서 자식 컴포넌트로 `Props`를 내려주는 **단방향 데이터 흐름(Top-Down)**을 통해 데이터가 어디서 출발해 어디로 흐르는지 명확히 추적할 수 있게 되었습니다.
 
 ## 🚨 트러블슈팅 (Troubleshooting)
 
