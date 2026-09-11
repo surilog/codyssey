@@ -5,6 +5,43 @@
 > 컴포넌트 기반 UI 설계, 단방향 데이터 흐름, 비동기 상태 처리(로딩/성공/실패/빈 상태) 및 RLS 기반 보안 권한 제어를 충실하게 구현했습니다.
 > **배포 URL**: https://codyssey-ashen.vercel.app/
 ---
+#  로컬 설치 및 실행 방법 (Getting Started)
+
+## 1. 레포지토리 클론 (Clone)
+
+```bash
+git clone [https://github.com/사용자계정/레포지토리이름.git](https://github.com/사용자계정/레포지토리이름.git)
+cd 레포지토리이름
+
+```
+
+## 2. 의존성 패키지 설치 (Install Dependencies)
+
+```bash
+npm install
+
+```
+
+## 3. 환경 변수 설정 (`.env`)
+
+프로젝트 루트 경로에 `.env` 파일을 생성하고 Supabase API 키를 설정합니다.
+
+```env
+VITE_SUPABASE_URL=YOUR_SUPABASE_URL
+VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+
+```
+
+## 4. 로컬 개발 서버 실행 (Run Development Server)
+
+```bash
+npm run dev
+
+```
+
+실행 후 브라우저에서 `http://localhost:5173`으로 접속합니다.
+
+
 
 ##  기술 스택 (Tech Stack)
 
@@ -79,7 +116,7 @@ react_project/
 [index.html] (#root)
      │
      ▼
-[main.jsx] ── (AuthProvider & BrowserRouter 전역 주입)
+[main.jsx] ── (AuthProvider 전역 주입)
      │
      ▼
   [App.jsx] ── (React Router 주소 매핑 & ProtectedRoute 인가)
@@ -132,7 +169,7 @@ Supabase에서 받아온 모든 컬럼 데이터(제목, 이미지, 카테고리
 **① 백엔드 ➔ 프론트엔드 (데이터 조회 흐름)**
 사용자 접근: 사용자가 /items 페이지로 이동
 
-커스텀 훅 실행: ItemListPage가 마운트되며 useItems() 커스텀 훅을 호출합니다.
+커스텀 훅 실행: ItemListPage가 마운트되며 useItems() 커스텀 훅을 호출!
 
 API 통신: useItems 내부의 useEffect가 실행되어 supabase.from('items').select('*')로 Supabase DB에 데이터를 요청
 
@@ -246,43 +283,3 @@ npm install
 * `Invalid Hook Call` 에러 발생 시 단순 코드 구문 오류 외에도 패키지 버전에 따른 인스턴스 미스매치 가능성을 고려해야 함을 학습함.
 
 ---
-
-##  로컬 설치 및 실행 방법 (Getting Started)
-
-### 1. 레포지토리 클론 (Clone)
-
-```bash
-git clone [https://github.com/사용자계정/레포지토리이름.git](https://github.com/사용자계정/레포지토리이름.git)
-cd 레포지토리이름
-
-```
-
-### 2. 의존성 패키지 설치 (Install Dependencies)
-
-```bash
-npm install
-
-```
-
-### 3. 환경 변수 설정 (`.env`)
-
-프로젝트 루트 경로에 `.env` 파일을 생성하고 Supabase API 키를 설정합니다.
-
-```env
-VITE_SUPABASE_URL=YOUR_SUPABASE_URL
-VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
-
-```
-
-### 4. 로컬 개발 서버 실행 (Run Development Server)
-
-```bash
-npm run dev
-
-```
-
-실행 후 브라우저에서 `http://localhost:5173`으로 접속합니다.
-
-```
-
-```

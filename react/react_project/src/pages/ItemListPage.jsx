@@ -46,7 +46,7 @@ export default function ItemListPage() {
             to={`/items/${item.id}`} 
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            <Card
+            <Card //Card컴포턴트의 Props로 넘겨줌
               id={item.id}
               title={item.title}
               description={item.description}
