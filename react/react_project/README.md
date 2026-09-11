@@ -3,7 +3,7 @@
 > **React 18**과 **Supabase**를 활용하여 구현한 SPA(Single Page Application) 기반 도서 리뷰 및 추천 웹 애플리케이션입니다.  
 > 사용자는 다양한 책의 리뷰를 둘러보고, 직접 읽은 도서를 등록/수정/삭제하며 관리할 수 있습니다.  
 > 컴포넌트 기반 UI 설계, 단방향 데이터 흐름, 비동기 상태 처리(로딩/성공/실패/빈 상태) 및 RLS 기반 보안 권한 제어를 충실하게 구현했습니다.
-> **배포 URL**: https://vercel.com/codyssey-react/codyssey
+> **배포 URL**: https://codyssey-ashen.vercel.app/
 ---
 
 ##  기술 스택 (Tech Stack)
