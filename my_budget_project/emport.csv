@@ -1,0 +1,5 @@
+date,type,category,amount,memo,tags
+2026-09-14,income,work,100000,월급,일
+2026-09-13,expense,food,10000,아침,meal
+2026-09-14,income,work,2000000,월급,
+2026-09-14,income,food,10000,아침식사,meal
