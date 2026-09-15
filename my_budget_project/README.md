@@ -128,9 +128,26 @@ python -m budget_app import --from import.csv
 2. **제너레이터 스트리밍 (`yield`)**: 대용량 거래 데이터 로딩 시 전체 데이터를 메모리에 올리지 않고 한 줄씩 읽어 메모리 사용을 최소화합니다 
 3. **데코레이터 기반 공통 기능 분리**: 실행 시간 측정(`@execution_time`) 및 스택트레이스를 가리고 사용자 안내문/힌트를 출력하는 에러 핸들러(`@handle_errors`)를 분리 적용했습니다
 
+## 6. 아키텍처 및 모듈 구조
 
-## 6.  모듈 연결 및 의존성 관계 한눈에 보기
+단일 책임 원칙(SRP)에 따라 각 파일이 하나의 고유한 책임만 가지도록 계층형으로 분리되었습니다.
 
+```
+my_budget_project/
+├── budget_app/
+│   ├── __init__.py          # 패키지 선언 파일
+│   ├── __main__.py          # 프로그램 실행 진입점 (Entry Point) [cite: 7, 14]
+│   ├── models.py            # [Model] @dataclass 기반 데이터 구조 및 직렬화 [cite: 7, 9]
+│   ├── repository.py        # [Repository] JSONL 파일 입출력, 제너레이터, 원자적 저장 [cite: 7, 14]
+│   ├── service.py           # [Service] 비즈니스 로직, 요약 집계, 예산 및 검증 [cite: 7, 15]
+│   ├── cli.py               # [CLI] argparse 인자 파싱 및 화면 출력 [cite: 7, 14]
+│   ├── exceptions.py        # 커스텀 예외 클래스 정의 [cite: 7, 15]
+│   └── decorators.py        # 예외 처리 및 시간 측정 데코레이터 [cite: 7, 13, 15]
+└── data/                    # 데이터 영구 저장 디렉터리 [cite: 14]
+
+```
+
+---
 ```
                ┌────────────────────────┐
                │      __main__.py       │ (프로그램 진입점)

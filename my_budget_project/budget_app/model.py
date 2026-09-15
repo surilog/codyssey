@@ -18,7 +18,7 @@ class Transasction:
         return f"Transaction(id={self.id}, amount={self.amount})"
 
 만약 `@dataclass`를 쓰지 않고 일반 클래스로 작성한다면, 
-객체를 만들고 출력할 때마다 아래처럼 반복적인 보일러플레이트(boilerplate) 코드를 직접 다 작성
+객체를 만들고 출력할 때마다 아래처럼 반복적인 보일러플레이트 코드를 직접 다 작성
 """
 """
 반면 `@dataclass`를 사용하면, 파이썬이 `__init__`(초기화)이나 `__repr__`(문자열 출력) 같은 기본 메서드를 배후에서 자동으로 생성
@@ -38,7 +38,7 @@ class Transasction:
 => 즉, 아직 거래 내역(`Transaction`)을 하나도 적지 않은 초기 상태라도, 기본 카테고리 목록(`식비`, `교통`, `주거` 등)은 미리 존재해야함
 
 -Budget:특정 달(YYYY-MM)에 총 얼마까지 쓸 것인가?"라는 목표 기준점
-=> 즉, 예산은 지출 데이터가 아니라, 한달에 한 번 설정하는 *월 단위 정책 데이터* => 지출 내역(Transaction)이 없어도 이미 저장되어 있어야함!
+=> 즉, 예산은 지출 데이터가 아니라, 한달에 한 번 설정하는 *월 단위 정책 데이터* => 지출 내역이 없어도 이미 저장되어 있어야함!
 """
 @dataclass
 class Transaction:
@@ -93,14 +93,6 @@ class Budget:
     def from_dict(cls, data: Dict[str, Any]) -> "Budget":
         return cls(**data)
 
-
-
-# 이미 tx라는 객체가 존재
-tx= Transaction(id="TX-001", type = "expense", date = "2024-01-15", amount=10000, category="food")
-
-
-# tx라는 나 자신(self)를 JSONL 문자열로 전환
-json_text = tx.to_jsonl()
 
 
 
