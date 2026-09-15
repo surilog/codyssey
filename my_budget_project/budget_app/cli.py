@@ -8,7 +8,7 @@ class CLIHandler:
     def __init__(self, service: BudgetService): #의존성 주입
         self.service=service
 
-    @handle_errors
+    
     def handle_category(self, args:argparse.Namespace)->None:
         """category명령어 정리(add,list,remove)"""
         action = getattr(args, "cat_action",None) # arags객체에 "cat_action" 속성이 있으면 가져오고 없으면 에러없이 None
@@ -32,7 +32,7 @@ class CLIHandler:
         else:
             print("올바른 category하위 명령어를 입력하세요! (add,list,remove)")
 
-    @handle_errors
+    
     def handle_budget(self,args:argparse.Namespace)->None:
         """budget명령어 정리(set)"""
         action = getattr(args, "budget_action",None)
@@ -43,7 +43,7 @@ class CLIHandler:
             print("올바른 budget하위 명령어를 입력하세요(set)")
 
 
-    @handle_errors
+    
     def handle_search(self, args:argparse.Namespace)->None:
         """search명령어 정리"""
         results = self.service.search_transactions(
@@ -64,7 +64,7 @@ class CLIHandler:
             print("검색 조건에 맞는 거래 내역이 없습니다.")
 
 
-    @handle_errors
+    
     def handle_export(self, args: argparse.Namespace) ->None:
         """export 명령어 정리"""
         count = self.service.export_to_csv(
@@ -75,13 +75,13 @@ class CLIHandler:
         )
         print(f"[완료] {args.out} ({count} records)")
 
-    @handle_errors
+    
     def handle_import(self,args:argparse.Namespace)->None:
         """import 명령어 정리"""
         result = self.service.import_from_csv(file_path=args.from_file)
         print(f"[완료] imported={result['imported']},skipped={result['skipped']}")
 
-    @handle_errors # 에러 처리 데코레이터 활용
+     # 에러 처리 데코레이터 활용
     def handle_add(self, args: argparse.Namespace)->None:
         #args: argparse.Namespace => argparse라이브러리가 터미널 명령어를 파싱하고 난 후 그 결과물을 Namespace라는 특별한 객체로 묶어 반환
         #즉, args 매개변수 안에 args.month, args.limit처럼 파싱된 옵션 값들이 들어있는 객체가 전달됨
@@ -112,12 +112,12 @@ class CLIHandler:
     """input => service의 add_transaction()에서 검증 후 model의 Translaction()에서 객체 생성 =>registory의 add()호출  맨 끝에 저장하기 위해
         =>model의 to_jsonal()실행해서 한 줄의 json문자열로 변환 후 저장"""
 
-    @handle_errors
+    
     def handle_delete(self, args: argparse.Namespace) -> None:
         self.service.delete_transaction(tx_id=args.id)
         print(f"[삭제 완료] id={args.id} 내역이 성공적으로 삭제되었습니다.")
 
-    @handle_errors
+    
     def handle_update(self, args: argparse.Namespace) -> None:
         updated_tx = self.service.update_transaction(tx_id=args.id,
         date=args.date,
@@ -127,7 +127,7 @@ class CLIHandler:
         memo=args.memo)
         print(f"[수정완료] id={updated_tx.id} 내역이 변경되었습니다.")
 
-    @handle_errors
+    
     @log_execution_time
     def handle_list(self, args: argparse.Namespace) -> None:
         #args: argparse.Namespace`: `list --limit 5` 명령어를 입력했을 때, 파싱된 `--limit` 값(`args.limit = 5`)을 들고 있는 객체 타입
@@ -146,7 +146,7 @@ class CLIHandler:
         if count ==0:
             print("등록된 거래 내역이 없습니다.")
 
-    @handle_errors
+    
     def handle_summary(self, args:argparse.Namespace) -> None:
 #args:argparse.Namespace =>summary --month 2024-01 --top 3`에서 넘겨받은 args.month("2024-01")와 args.top(3) 값이 들어있는 객체 타입
         """summary명령어: 월별 요약 리포트 및 예산 경고 출력"""

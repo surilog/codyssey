@@ -2,7 +2,9 @@ import sys
 from .repository import TransactionRepository
 from .service import BudgetService
 from .cli import CLIHandler
+from .decorators import handle_errors
 
+@handle_errors
 def main():
     # 저장소 객체 생성
     repo=TransactionRepository()
