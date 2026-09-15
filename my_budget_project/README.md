@@ -52,19 +52,19 @@ python -m budget_app list --limit 5
 
 ### 3) 거래 조건 검색 (`search`)
 ```powershell
-python -m budget_app search --from 2026-01-01 --to 2026-01-31 --category food --type expense -q 회식
+python -m budget_app search --from 2026-09-01 --to 2026-09-31 --category food --type expense -q 회식
 ```
 * 기간(`--from`, `--to`), 카테고리, 타입, 메모 키워드(`-q`), 태그(`--tag`) 조건을 조합하여 최신순으로 검색합니다.
 
 ### 4) 월별 요약 및 예산 경고 (`summary`)
 ```powershell
-python -m budget_app summary --month 2026-01 --top 3
+python -m budget_app summary --month 2026-09 --top 3
 ```
 * 해당 월의 총 수입, 총 지출, 잔액, 지출 TOP N 카테고리 및 예산 사용률(%)과 초과 경고를 출력합니다.
 
 ### 5) 예산 설정 (`budget set`)
 ```powershell
-python -m budget_app budget set --month 2026-01 --amount 500000
+python -m budget_app budget set --month 2026-09 --amount 500000
 ```
 * 특정 월(YYYY-MM)의 목표 예산을 등록합니다.
 
@@ -82,20 +82,20 @@ python -m budget_app category remove study
 
 ### 7) 거래 수정 (`update`) - 옵션 방식
 ```powershell
-python -m budget_app update --id TX-000001 --amount 40000 --memo "메모 수정"
+python -m budget_app update --id TX-000005 --amount 40000 --memo "메모 수정"
 ```
 * 거래 ID를 기반으로 변경하고자 하는 필드만 옵션 인자로 넘겨 안전하게 수정합니다.
 
 ### 8) 거래 삭제 (`delete`)
 ```powershell
-python -m budget_app delete --id TX-000001
+python -m budget_app delete --id TX-000005
 ```
 * 특정 거래 ID를 지정하여 삭제합니다.
 
 ### 9) CSV 내보내기 / 가져오기 (`export` / `import`)
 ```powershell
 # CSV 내보내기
-python -m budget_app export --out export.csv --month 2024-01
+python -m budget_app export --out export.csv --month 2026-09
 
 # CSV 가져오기
 python -m budget_app import --from import.csv
