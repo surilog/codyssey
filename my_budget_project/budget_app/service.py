@@ -116,7 +116,7 @@ class BudgetService:
                     tags = [t.strip() for t in tags_raw.split(",") if t.strip()] if tags_raw else []
 
                     #비즈니스 검증 및 거래 등록 호출
-
+                    
                     self.add_transaction(
                         tx_type = tx_type,
                         date=date,

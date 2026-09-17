@@ -3,3 +3,4 @@
 {"id": "TX-000003", "type": "expense", "date": "2026-09-15", "amount": 15000, "category": "food", "memo": "점심", "tags": ["meal"]}
 {"id": "TX-000004", "type": "income", "date": "2026-09-14", "amount": 2000000, "category": "work", "memo": "월급", "tags": []}
 {"id": "TX-000005", "type": "income", "date": "2026-09-15", "amount": 45000, "category": "food", "memo": "저녁회식", "tags": ["meal"]}
+{"id": "TX-000006", "type": "income", "date": "2026-09-17", "amount": 200000, "category": "food", "memo": "hello,", "tags": ["update"]}
