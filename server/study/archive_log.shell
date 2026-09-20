@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# 설정 경로
+LOG_DIR="/var/log/agent-app"
+ARCHIVE_DIR="/var/log/monitor/agent-app/archive"
+
+# 1. 로그 디렉토리 및 아카이브 디렉토리 존재 여부 예외 처리
+if [ ! -d "$LOG_DIR" ]; then
+    echo "[WARNING] Log directory does not exist: $LOG_DIR. Exiting safely."
+    exit 0
+fi
+
+if [ ! -d "$ARCHIVE_DIR" ]; then
+    echo "[INFO] Archive directory does not exist. Creating: $ARCHIVE_DIR"
+    mkdir -p "$ARCHIVE_DIR" 2>/dev/null
+    if [ $? -ne 0 ]; then
+        echo "[ERROR] Permission denied or failed to create archive directory: $ARCHIVE_DIR"
+        exit 1
+    fi
+fi
+
+# 2. 7일 이상 경과한 .log 파일 압축 및 아카이브 이동
+# (대상: /var/log/agent-app/*.log 중 7일 이상 경과한 파일)
+find "$LOG_DIR" -maxdepth 1 -name "*.log*" -type f -mtime +7 2>/dev/null | while read -r file; do
+    if [ -f "$file" ]; then
+        echo "[INFO] Compressing and archiving old log: $file"
+        gzip -c "$file" > "$ARCHIVE_DIR/$(basename "$file").gz" 2>/dev/null
+        if [ $? -eq 0 ]; then
+            rm -f "$file"
+        else
+            echo "[WARNING] Failed to compress or move: $file"
+        fi
+    fi
+done
+
+# 3. 아카이브 폴더 내 30일 이상 경과한 .gz 파일 삭제
+# (대상: /var/log/monitor/agent-app/archive/*.gz 중 30일 이상 경과한 파일)
+find "$ARCHIVE_DIR" -maxdepth 1 -name "*.gz" -type f -mtime +30 2>/dev/null | while read -r archive_file; do
+    if [ -f "$archive_file" ]; then
+        echo "[INFO] Removing expired archive (>30 days): $archive_file"
+        rm -f "$archive_file" 2>/dev/null
+    fi
+done
+
+echo "[INFO] Log archival policy executed successfully."

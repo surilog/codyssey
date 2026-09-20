@@ -1,0 +1,85 @@
+#!/bin/bash
+# 크론탭 환경에서도 시스템 명령어를 찾을 수 있도록 PATH 설정
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+#  Health Check
+PID=$(pgrep -f "agent-app" | head -n 1)
+if [ -z "$PID" ]; then
+    echo "[FAIL] Process is not running!"
+    exit 1
+fi
+
+if ! ss -tulnp | grep -q ":15034"; then
+    echo "[FAIL] Port 15034 is not listening!"
+    exit 1
+fi
+
+
+if ! ufw status 2>/dev/null | grep -q "Status: active"; then
+    echo "[WARNING] UFW Firewall is inactive!"
+fi
+
+
+CPU=$(top -bn1 | grep "Cpu(s)" | awk '{print 100 - $8}')
+CPU_INT=$(printf "%.0f" "$CPU")
+
+MEM=$(free | awk '/Mem:/ {printf "%.1f", $3/$2 * 100}')
+MEM_INT=$(printf "%.0f" "$MEM")
+
+DISK_USED=$(df -h / | awk 'NR==2 {print $5}' | tr -d '%')
+
+#  Threshold Warnings
+if [ "$CPU_INT" -gt 20 ]; then
+    echo "[WARNING] CPU threshold exceeded (${CPU}% > 20%)"
+fi
+if [ "$MEM_INT" -gt 10 ]; then
+    echo "[WARNING] MEM threshold exceeded (${MEM}% > 10%)"
+fi
+if [ "$DISK_USED" -gt 80 ]; then
+    echo "[WARNING] DISK threshold exceeded (${DISK_USED}% > 80%)"
+fi
+
+#  Logging
+TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+LOG_LINE="[$TIMESTAMP] PID:$PID CPU:${CPU}% MEM:${MEM}% DISK_USED:${DISK_USED}%"
+
+# 로그 파일 용량 관리 (10MB 초과 시 최대 10개 파일 로테이션)
+
+LOG_FILE="/var/log/agent-app/monitor.log"
+MAX_SIZE=$((10*1024*1024)) # 10MB 
+
+rotate_log() {
+    if [ -f "$LOG_FILE" ]; then
+        # 파일 크기 확인 (Linux 호환: stat -c%s)
+        FILE_SIZE=$(stat -c%s "$LOG_FILE" 2>/dev/null || stat -f%z "$LOG_FILE" 2>/dev/null)
+        
+        if [ "$FILE_SIZE" -ge "$MAX_SIZE" ]; then
+            # 가장 오래된 10번째 백업 파일이 존재하면 삭제
+            [ -f "$LOG_FILE.10" ] && rm -f "$LOG_FILE.10"
+            
+            #  9번부터 1번까지의 백업 파일 번호를 뒤로 한 칸씩 밀기 (.9 -> .10, .8 -> .9 ...)
+            for i in {9..1}; do
+                if [ -f "$LOG_FILE.$i" ]; then
+                    mv "$LOG_FILE.$i" "$LOG_FILE.$((i+1))"
+                fi
+            done
+            
+            #  현재 10MB가 된 원본 로그를 .1 파일로 이동
+            mv "$LOG_FILE" "$LOG_FILE.1"
+        fi
+    fi
+}
+
+# 로그 기록 전 로테이션 함수 실행
+rotate_log
+
+# 로그 파일에 누적 출력
+TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+LOG_LINE="[$TIMESTAMP] PID:$PID CPU:${CPU}% MEM:${MEM}% DISK_USED:${DISK_USED}%"
+echo "$LOG_LINE" >> "$LOG_FILE"
+
+
+echo "====== SYSTEM MONITOR RESULT ======"
+echo "[HEALTH CHECK] Process OK (PID: $PID), Port 15034 OK"
+echo "[RESOURCE MONITORING] CPU: ${CPU}% | MEM: ${MEM}% | DISK: ${DISK_USED}%"
+echo "[INFO] Log appended: /var/log/agent-app/monitor.log"

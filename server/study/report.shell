@@ -1,0 +1,76 @@
+#!/bin/bash
+
+LOG_FILE="/var/log/agent-app/monitor.log"
+
+if [ ! -f "$LOG_FILE" ]; then
+    echo "[ERROR] Log file not found: $LOG_FILE"
+    exit 1
+fi
+
+# 인자로 받은 시작 시간과 종료 시간 (선택 사항)
+START_TIME="${1:-}"
+END_TIME="${2:-}"
+
+# awk에 변수 전달하여 실행
+awk -v start="$START_TIME" -v end="$END_TIME" '
+BEGIN {
+    cpu_sum = 0; mem_sum = 0; count = 0;
+    cpu_max = -1; cpu_min = 999999;
+    mem_max = -1; mem_min = 999999;
+}
+{
+    # 로그 포맷: [2026-05-13 17:21:38] PID:3943 CPU:1.6% MEM:4.4% DISK_USED:1%
+    # 타임스탬프 추출 (예: 2026-05-13 17:21:38)
+    log_time = substr($1, 2) " " substr($2, 1, length($2)-1);
+
+    # 시작/종료 시간 필터링 조건 확인
+    if (start != "" && log_time < start) next;
+    if (end != "" && log_time > end) next;
+
+    # CPU 및 Memory 값 파싱
+    for (i=1; i<=NF; i++) {
+        if ($i ~ /^CPU:/) {
+            split($i, a, ":");
+            sub("%", "", a[2]);
+            cpu = a[2] + 0;
+        }
+        if ($i ~ /^MEM:/) {
+            split($i, b, ":");
+            sub("%", "", b[2]);
+            mem = b[2] + 0;
+        }
+    }
+
+    cpu_sum += cpu;
+    mem_sum += mem;
+    count++;
+
+    # CPU 최대/최소 판별
+    if (cpu > cpu_max) { cpu_max = cpu; cpu_max_time = log_time; }
+    if (cpu < cpu_min) { cpu_min = cpu; cpu_min_time = log_time; }
+
+    # Memory 최대/최소 판별
+    if (mem > mem_max) { mem_max = mem; mem_max_time = log_time; }
+    if (mem < mem_min) { mem_min = mem; mem_min_time = log_time; }
+}
+END {
+    if (count == 0) {
+        print "[INFO] No data points found for the given time range."
+        exit 0
+    }
+
+    print "====== STATISTICS REPORT ======"
+    if (start != "" || end != "") {
+        print "  [Time Range]: " (start != "" ? start : "Start") " ~ " (end != "" ? end : "End")
+    }
+    printf "  [CPU]\n"
+    printf "    Average : %.1f%%\n", cpu_sum / count
+    printf "    Maximum : %.1f%% at %s\n", cpu_max, cpu_max_time
+    printf "    Minimum : %.1f%% at %s\n", cpu_min, cpu_min_time
+    printf "  [Memory]\n"
+    printf "    Average : %.1f%%\n", mem_sum / count
+    printf "    Maximum : %.1f%% at %s\n", mem_max, mem_max_time
+    printf "    Minimum : %.1f%% at %s\n", mem_max, mem_min_time
+    printf "  [Samples]\n"
+    printf "    Data Points: %d samples\n", count
+}' "$LOG_FILE"
