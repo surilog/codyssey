@@ -47,8 +47,22 @@ cat /etc/ssh/sshd_config | grep PermitRootLogin
 ss -tulnp | grep sshd
 
 ```
-![SSH포트 확인](/images/SSHsetting1.png)
-![SSH포트 확인](/images/SSHsetting2.png)
+
+<div style="text-align: center; margin: 20px 0;">
+  <img src="{{ '/images/SSHsetting1.png' | relative_url }}" 
+       alt="SSH포트 확인" 
+       style="max-width: 80%; height: auto; border: 1px solid #ddd; border-radius: 5px;">
+  <p style="font-size: 0.9em; color: #666;">[SSH포트 확인]</p>
+</div>
+
+
+<div style="text-align: center; margin: 20px 0;">
+  <img src="{{ '/images/SSHsetting2.png' | relative_url }}" 
+       alt="SSH포트 확인2" 
+       style="max-width: 80%; height: auto; border: 1px solid #ddd; border-radius: 5px;">
+  <p style="font-size: 0.9em; color: #666;">[SSH포트 확인2]</p>
+</div>
+
 
 
 ### 2.2 방화벽(UFW) 설정
