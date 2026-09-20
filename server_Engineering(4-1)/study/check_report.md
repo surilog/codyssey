@@ -49,8 +49,8 @@ ss -tulnp | grep sshd
 ```
 
 
-![SSH포트 확인](server_Engineering(4-1)images/SSHsetting1.png)
-![SSH포트 확인](images/SSHsetting2.png)
+![SSH포트 확인](../images/SSHsetting1.png)
+![SSH포트 확인](../images/SSHsetting2.png)
 
 
 ### 2.2 방화벽(UFW) 설정
@@ -62,7 +62,7 @@ ss -tulnp | grep sshd
 * 원격 관리를 위한 SSH 포트(`20022/tcp`)와 애플리케이션 포트(`15034/tcp`)만 허용
 
 
-![방화벽 설정](images/ufw_check.png)
+![방화벽 설정](../images/ufw_check.png)
 
 ### 2.3 계정 / 그룹 / 권한 체계 구성
 
@@ -75,7 +75,7 @@ ss -tulnp | grep sshd
 
 * `agent-test`: QA/테스트 전용
 
-![계정 / 그룹 / 권한 체계 구성](images/create_account_check.png)
+![계정 / 그룹 / 권한 체계 구성](../images/create_account_check.png)
 
 
 * **그룹 생성**:
@@ -84,7 +84,7 @@ ss -tulnp | grep sshd
 
 * `agent-core`: `agent-admin`, `agent-dev` 포함
 
-![계정 / 그룹 / 권한 체계 구성](images/create_group_check.png)
+![계정 / 그룹 / 권한 체계 구성](../images/create_group_check.png)
 
 
 
@@ -94,7 +94,7 @@ ss -tulnp | grep sshd
 * `$AGENT_HOME` (`/home/agent-admin/agent-app`): 소유자 `agent-admin:agent-core`, 권한 `750`
 
 
-![디렉토리 구조 및 접근 권한 설정](images/2-3.png)
+![디렉토리 구조 및 접근 권한 설정](../images/2-3.png)
 
 * `$AGENT_HOME/upload_files`: 소유자 `agent-admin:agent-common`, 권한 `2770` 및 ACL 설정 (공용 R/W)
 
@@ -102,7 +102,7 @@ ss -tulnp | grep sshd
 * `$AGENT_HOME/api_keys` 및 `/var/log/agent-app`: 소유자 `agent-admin:agent-core`, 권한 `2770` 및 ACL 설정 (핵심 그룹만 R/W)
 
 
-![디렉토리 구조 및 접근 권한 설정](images/2-4.png)
+![디렉토리 구조 및 접근 권한 설정](../images/2-4.png)
 
 
 ### 2.5 애플리케이션 실행 및 검증
@@ -118,7 +118,7 @@ export AGENT_LOG_DIR=/var/log/agent-app
 
 * **앱 실행 결과 (Boot Sequence 5단계)**:
 
-![앱 실행 결과](images/boot_s_check.png)
+![앱 실행 결과](../images/boot_s_check.png)
 
 
 
@@ -143,9 +143,9 @@ export AGENT_LOG_DIR=/var/log/agent-app
 ls -lt /var/log/agent-app/
 ```
 
-![monitor.sh 파일 위치 및 권한](images/4-1.png)
-![monitor.sh 기능 확인 및 로그 확인](images/4-2.png)
-![로그 로테이션 확인](images/log.png)
+![monitor.sh 파일 위치 및 권한](../images/4-1.png)
+![monitor.sh 기능 확인 및 로그 확인](../images/4-2.png)
+![로그 로테이션 확인](../images/log.png)
 
 ### 2.7 Cron 자동화 스크립트 등록
 
@@ -160,15 +160,15 @@ ls -lt /var/log/agent-app/
 
 * **확인 결과**: 1분 주기마다 정상적으로 로그 파일(`/var/log/agent-app/monitor.log`)에 데이터가 누적되는 것 검증 완료
 
-![1분 주기 로그 누적 확인](images/4-2.png)
+![1분 주기 로그 누적 확인](../images/4-2.png)
 
 
 ## 3. 보너스 수행 내역
 
 ### 3-1.
 
-![ 요약 리포트 자동 생성 및 시간 필터링 확인](images/bonus1.png)
+![ 요약 리포트 자동 생성 및 시간 필터링 확인](../images/bonus1.png)
 
 
 ### 3-2.
-![시간 기반 로그 보존 및 압축 정책인](images/bouns2.png)
+![시간 기반 로그 보존 및 압축 정책인](../images/bouns2.png)
