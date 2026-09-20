@@ -171,4 +171,4 @@ ls -lt /var/log/agent-app/
 
 
 ### 3-2.
-![시간 기반 로그 보존 및 압축 정책인](../images/bouns2.png)
+![시간 기반 로그 보존 및 압축 정책확인](../images/bonus2.png)
