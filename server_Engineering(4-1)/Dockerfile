@@ -1,7 +1,7 @@
-# 베이스 이미지로 우분투 24.04 사용
+# 베이스 이미지로 우분투 22.04 사용
 FROM ubuntu:24.04
 
-# 필수 패키지 설치 (sudo, ufw, iproute2, procps, acl 등)
+# 필수 패키지 설치
 RUN apt-get update && apt-get install -y \
     sudo \
     ufw \
@@ -40,21 +40,27 @@ RUN mkdir -p $AGENT_HOME/upload_files && \
     chown -R agent-admin:agent-core /var/log/agent-app && \
     chmod 2770 /var/log/agent-app
 
-# 3. 실행 파일 복사 및 권한 부여 (맥 빌드 디렉토리에 있는 agent-app을 복사)
+# 3. 애플리케이션 실행 파일 복사 및 권한 설정
 COPY agent-app $AGENT_HOME/agent-app
 RUN chown agent-admin:agent-core $AGENT_HOME/agent-app && \
     chmod 750 $AGENT_HOME/agent-app
 
-# 4. API 키 파일 생성 및 권한 설정
-RUN echo "agent_api_key_test" > $AGENT_HOME/api_keys/t_secret.key && \
-    chown agent-admin:agent-core $AGENT_HOME/api_keys/t_secret.key && \
-    chmod 640 $AGENT_HOME/api_keys/t_secret.key
+# 4. bin 디렉토리 내 쉘 스크립트 복사 및 권한 설정 (소유자 agent-dev, 그룹 agent-core, 권한 750)
+COPY bin/ $AGENT_HOME/bin/
+RUN chown -R agent-dev:agent-core $AGENT_HOME/bin && \
+    chmod -R 750 $AGENT_HOME/bin
 
-# 5. /etc/environment 환경 변수 영구 등록
+# 5. 키 파일(secret.key 및 t_secret.key) 생성 및 권한 설정 (640)
+RUN echo "agent_api_key_test" > $AGENT_HOME/api_keys/secret.key && \
+    echo "agent_api_key_test" > $AGENT_HOME/api_keys/t_secret.key && \
+    chown -R agent-admin:agent-core $AGENT_HOME/api_keys && \
+    chmod -R 640 $AGENT_HOME/api_keys
+
+# 6. /etc/environment 환경 변수 영구 등록
 RUN echo "AGENT_HOME=$AGENT_HOME" >> /etc/environment && \
     echo "AGENT_PORT=15034" >> /etc/environment && \
     echo "AGENT_UPLOAD_DIR=$AGENT_HOME/upload_files" >> /etc/environment && \
-    echo "AGENT_KEY_PATH=$AGENT_HOME/api_keys/t_secret.key" >> /etc/environment && \
+    echo "AGENT_KEY_PATH=$AGENT_HOME/api_keys/secret.key" >> /etc/environment && \
     echo "AGENT_LOG_DIR=/var/log/agent-app" >> /etc/environment
 
 # 작업 디렉토리 설정
