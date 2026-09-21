@@ -77,6 +77,7 @@ sudo ufw allow 20022/tcp comment 'SSH'
 sudo ufw allow 15034/tcp comment 'APP'
 sudo ufw enable
 
+ufw status
 ```
 
 ### 2. 계정 / 그룹 및 디렉토리 권한 설정 (ACL)
