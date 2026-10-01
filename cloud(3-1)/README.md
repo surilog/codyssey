@@ -33,6 +33,23 @@ cloud-hw/
 
 <img src="./docs/aws_cloud_architecture_diagram_kr.png" alt="System Architecture">
 
+## 인프라 구성 상세 (Infrastructure Details)
+
+| 구분                   | 주요 설정 및 리소스 사양                                                              | 비고 / 보안 설정                   |
+| -------------------- | --------------------------------------------------------------------------- | ---------------------------- |
+| **AWS Region**       | `ap-northeast-2` (서울 리전)                                                    | 기본 리전 고정                     |
+| **VPC**              | `10.0.0.0/16` (`cloud-hw-vpc`)                                              | 태그: `Project=cloud-hw`       |
+| **Public Subnet**    | `10.0.1.0/24` (`cloud-hw-subnet`, `ap-northeast-2a`)                        | 퍼블릭 IP 자동 할당                 |
+| **Internet Gateway** | `cloud-hw-igw`                                                              | VPC 바인딩 및 라우터 매핑             |
+| **Route Table**      | `0.0.0.0/0` ➔ `cloud-hw-igw`                                                | 외부 통신(Public Subnet)         |
+| **EC2 Instance**     | `t3.micro` (Ubuntu 24.04 LTS, EBS 8GiB `gp3`)                               | 인스턴스명: `cloud-hw-web-server` |
+| **Key Pair**         | `cloud-hw-key` (`cloud-hw-key.pem`)                                         | SSH 권한 설정 (`chmod 400`)      |
+| **Security Group**   | `SSH(22)`: 관리자 IP만 (`/32`)`HTTP(80)`: `0.0.0.0/0` `HTTPS(443)`: `0.0.0.0/0` | 8080 포트는 외부 차단               |
+| **Reverse Proxy**    | Host Nginx (`/etc/nginx/sites-available/default`)                           | `127.0.0.1:8080` 포워딩         |
+| **Container**        | `cloud-web-app` (`nginx:alpine` 기반)                                         | `-p 127.0.0.1:8080:80`       |
+| **SSL/TLS**          | Let's Encrypt (`Certbot`)                                                   | `certbot renew --dry-run` 검증 |
+
+---
 
 ###  기본 접속 정보
 
@@ -203,47 +220,7 @@ sudo certbot renew --dry-run
 
 ---
 
-## 인프라 구성 상세 (Infrastructure Details)
 
-| 구분                   | 주요 설정 및 리소스 사양                                                              | 비고 / 보안 설정                   |
-| -------------------- | --------------------------------------------------------------------------- | ---------------------------- |
-| **AWS Region**       | `ap-northeast-2` (서울 리전)                                                    | 기본 리전 고정                     |
-| **VPC**              | `10.0.0.0/16` (`cloud-hw-vpc`)                                              | 태그: `Project=cloud-hw`       |
-| **Public Subnet**    | `10.0.1.0/24` (`cloud-hw-subnet`, `ap-northeast-2a`)                        | 퍼블릭 IP 자동 할당                 |
-| **Internet Gateway** | `cloud-hw-igw`                                                              | VPC 바인딩 및 라우터 매핑             |
-| **Route Table**      | `0.0.0.0/0` ➔ `cloud-hw-igw`                                                | 외부 통신(Public Subnet)         |
-| **EC2 Instance**     | `t3.micro` (Ubuntu 24.04 LTS, EBS 8GiB `gp3`)                               | 인스턴스명: `cloud-hw-web-server` |
-| **Key Pair**         | `cloud-hw-key` (`cloud-hw-key.pem`)                                         | SSH 권한 설정 (`chmod 400`)      |
-| **Security Group**   | `SSH(22)`: 관리자 IP만 (`/32`)`HTTP(80)`: `0.0.0.0/0` `HTTPS(443)`: `0.0.0.0/0` | 8080 포트는 외부 차단               |
-| **Reverse Proxy**    | Host Nginx (`/etc/nginx/sites-available/default`)                           | `127.0.0.1:8080` 포워딩         |
-| **Container**        | `cloud-web-app` (`nginx:alpine` 기반)                                         | `-p 127.0.0.1:8080:80`       |
-| **SSL/TLS**          | Let's Encrypt (`Certbot`)                                                   | `certbot renew --dry-run` 검증 |
-
----
-
-##  리포지토리 파일 구조 (Repository Structure)
-
-```
-cloud-hw-advanced/
-├── app/
-│   └── index.html             # 1. 커스텀 웹 애플리케이션 메인 페이지
-├── docs/
-│   ├── architecture.png       # 인프라 구성 아키텍처 다이어그램
-│   ├── troubleshooting.md     # 트러블슈팅 상세 보고서
-│   └── cleanup-checklist.md   # 리소스 일괄 삭제 검증 체크리스트
-├── nginx/
-│   └── site.conf              # 2. Host Nginx 리버스 프록시 설정
-├── scripts/
-│   ├── create-infra.sh        # Phase 1: AWS CLI 인프라 자동 생성 스크립트
-│   ├── provision.sh           # Phase 2: Docker/Nginx 자동 설치 및 배포 스크립트
-│   ├── setup-ssl.sh           # Phase 3: DuckDNS + Certbot SSL/TLS 자동화 스크립트
-│   └── teardown-infra.sh      # Phase 1~3: 태그 기반 인프라 자원 일괄 삭제 스크립트
-├── Dockerfile                 # 3. Nginx Alpine 기반 Docker 이미지 빌드 파일
-└── README.md                  # 본 최종 설명 문서
-
-```
-
----
 
 ##  제출 증빙 스크린샷 가이드
 
