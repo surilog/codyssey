@@ -84,21 +84,7 @@ python main.py commit --temperature 0.5 --max-tokens 800
 
 ## 4. 커밋 / PR 생성 결과 예시
 
-<img src="./images/env_delete.png" alt="env없을 때">
 
-<img src="./images/not_change.png" alt="변경사항 없을 때">
-
-
-### ① 커밋 메시지 생성 결과 예시
-<img src="./images/commit.png" alt="commit 실행 결과">
-
-<img src="./images/commit_conventional.png" alt="commit --convention conventional 실행 결과">
-
-<img src="./images/commit_safemode.png" alt="commit --safe-mode 실행 결과">
-
-<img src="./images/commit_maxtokens.png.png" alt="commit --max-tokens 실행 결과">
-
-<img src="./images/commit_temperature.png.png" alt="commit --temperature 실행 결과">
 
 - **기본 커밋 메시지 (`commit`)**:
   ```text
@@ -119,15 +105,7 @@ python main.py commit --temperature 0.5 --max-tokens 800
 ---
 
 ### ② PR 설명문 생성 결과 예시
-<img src="./images/pr.png" alt="python main.py pr 실행 결과">
 
-<img src="./images/pr_conventional.png" alt="python main.py pr convention 실행 결과">
-
-<img src="./images/pr_safemode.png" alt="python main.py pr --safe-mode 실행 결과">
-
-<img src="./images/pr_maxtokens.png" alt="python main.py pr --max-tokens 실행 결과">
-
-<img src="./images/pr_temperature.png" alt="python main.py pr --temperature 실행 결과">
 
 ```markdown
 [Refactor] 코드 모듈화 및 팀 컨벤션(--convention) 옵션 추가
