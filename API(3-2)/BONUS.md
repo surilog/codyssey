@@ -1,4 +1,4 @@
-# 📝 보너스 과제 제출 증빙
+#  보너스 과제 제출 증빙
 
 ## 1. PR 링크
 - **PR 링크**: https://github.com/surilog/codyssey/pull/1 
