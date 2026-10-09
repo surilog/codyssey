@@ -4,6 +4,15 @@
 
 ---
 
+##  관련 기술 및 과제 문서 바로가기
+-  **[기능 동작 및 스크린샷 증빙 보고서 (증빙.md)](./증빙.md)**: 모든 CLI 명령어·옵션·예외 처리 실행 스크린샷 12장 및 보너스 과제 증빙
+-  **[시스템 아키텍처 및 파이프라인 설계 보고서 (ARCHITECTURE.md)](./ARCHITECTURE.md)**: 전체 시스템 파이프라인(Mermaid 다이어그램), 모듈 분리 및 내부 동작 원리, AI 파라미터 제어 전략
+-  **[기능 테스트 및 검증 결과 보고서 (TEST_REPORT.md)](./TEST_REPORT.md)**: 전 기능(TC-01~TC-09) 터미널 실행 로그 전문 및 기능 검증 기록
+-  **[보너스 과제 제출 증빙 (BONUS.md)](./BONUS.md)**: GitHub PR 링크 및 5대 개선점 요약본
+
+---
+
+
 ## 1. 설치 방법 (Installation)
 
 ### 요구 환경
@@ -78,6 +87,8 @@ python main.py commit --temperature 0.5 --max-tokens 800
 
 <img src="./images/env_delete.png" alt="env없을 때">
 
+<img src="./images/not_change.png" alt="변경사항 없을 때">
+
 
 ### ① 커밋 메시지 생성 결과 예시
 <img src="./images/commit.png" alt="commit 실행 결과">
@@ -151,3 +162,11 @@ python main.py commit --temperature 0.5 --max-tokens 800
 3. **Staged 변경 사항 관리**
    - 본 도구는 `git diff HEAD`를 조회하므로 `git add`로 스테이징된 변경점과 작업 트리의 변경점을 모두 포착합니다.
    - 특정 변경점만 선택하여 커밋/PR을 만들고자 할 때는 해당 파일만 스테이징하거나 임시 보관(`git stash`) 후 실행하세요.
+
+---
+
+##  관련 문서 바로가기
+-  **[기능 동작 및 스크린샷 증빙 보고서 (증빙.md)](./증빙.md)**
+-  **[시스템 아키텍처 및 설계 보고서 (ARCHITECTURE.md)](./ARCHITECTURE.md)**
+-  **[기능 테스트 및 검증 결과 보고서 (TEST_REPORT.md)](./TEST_REPORT.md)**
+-  **[보너스 과제 제출 증빙 (BONUS.md)](./BONUS.md)**
