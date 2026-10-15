@@ -1,5 +1,10 @@
 # B4-2 Linux 장애 분석 및 시스템 모니터링
 
+- **OOM 분석 리포트**: [#2 이슈](https://github.com/surilog/codyssey/issues/2)
+- **CPU 과점유 분석 리포트**: [#3 이슈](https://github.com/surilog/codyssey/issues/3)
+- **Deadlock 진단 리포트**: [#4 이슈](https://github.com/surilog/codyssey/issues/4)
+- **스케줄링 분석 리포트**: [#5 이슈](https://github.com/surilog/codyssey/issues/5)
+
 `agent-leak-app-arm64`에서 발생한 OOM(메모리 누수), CPU 과점유(Watchdog 비상 종료), 교착 상태(Deadlock) 장애를 재현하고,
 관제 스크립트(`scripts/monitor.sh`)와 시스템 로그를 통해 원인을 분석한 뒤 조치 및 검증 결과를 정리하였습니다.
 
@@ -12,7 +17,7 @@
 
 ---
 
-## 📌 목차 (Table of Contents)
+## 목차 (Table of Contents)
 
 1. [Environment (실행 환경)](#environment)
 2. [Project Structure (디렉토리 구조)](#project-structure)
