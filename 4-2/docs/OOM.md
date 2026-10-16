@@ -51,7 +51,7 @@
      | `256MB` | 약 33초 | SELF-TERMINATED (exit 137) |
      | `512MB` | 2분 이상 지속 생존 | 정상 동작 (Memory Cache Flushed) |
 
-     <img src="./images/OOM_512_app_log.png" alt="MEMEORY_LIMIT 변경 후" width="850">
+     <img src="/images/OOM_512_app_log.png" alt="MEMEORY_LIMIT 변경 후" width="850">
 
 ---
 
