@@ -28,11 +28,11 @@
 2026-10-15 04:29:56,653 [INFO] [Thread-A] Resumed. Calculating... (60%)
 ```
 
-<img src="./images/bonus_log.png" alt="로그" width="850">
+<img src="/images/bonus_log.png" alt="로그" width="850">
 
 ---
 
-<img src="./images/sch.png" alt="로그" width="850">
+<img src="/images/sch.png" alt="로그" width="850">
 
 
 ## 3. 각 알고리즘에 대한 개념

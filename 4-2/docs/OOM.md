@@ -87,15 +87,15 @@ source ~/.bash_profile
 (sleep 2; while ~/agent-app/bin/monitor.sh > /dev/null; do sleep 3; done) &$AGENT_HOME/agent-leak-app-arm64
 ```
 
-<img src="./images/OOM_before.png" alt="Agent READY확인" width="850">
+<img src="/images/OOM_before.png" alt="Agent READY확인" width="850">
 
 ---
 
-<img src="./images/exit_before_OOM.png" alt="OOM 확인[Memory Guard]" width="850">
+<img src="/images/exit_before_OOM.png" alt="OOM 확인[Memory Guard]" width="850">
 
 ---
 
-<img src="./images/OOM_PID.png" alt="PROCESS down" width="850">
+<img src="/images/OOM_PID.png" alt="PROCESS down" width="850">
 
 ---
 
@@ -119,17 +119,17 @@ source ~/.bash_profile
 ```
 
 
-<img src="./images/OOM_512_Ready.png" alt="Agent READY확인" width="850">
+<img src="/images/OOM_512_Ready.png" alt="Agent READY확인" width="850">
 
 --- 
 
-<img src="./images/OOM_512_heap.png" alt="HEAP 경고 확인" width="850">
+<img src="/images/OOM_512_heap.png" alt="HEAP 경고 확인" width="850">
 
 - log기록
 ```bash
 tail -f /var/log/agent-app/monitor.log
 ```
-<img src="./images/OOM_525.png" alt="monitor.log 기록 확인" width="850">
+<img src="/images/OOM_525.png" alt="monitor.log 기록 확인" width="850">
 
 ---
 
@@ -141,7 +141,7 @@ top -b -d 3 -n 15 -p $(pgrep -n -x agent-leak-app-)
 ```
 - ps와 top명령어 확인
 
-<img src="./images/512_top_ps.png" alt="ps, top 명령어 확인" width="850">
+<img src="/images/512_top_ps.png" alt="ps, top 명령어 확인" width="850">
 
 
 - 525MB에서 종료 대신 Memory Cache Flushed, RSS 517MB → 188MB

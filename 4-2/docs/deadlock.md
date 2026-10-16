@@ -109,11 +109,11 @@ tail -n 10 $AGENT_LOG_DIR/agent_app.log
 
 ```
 
-<img src="./images/deadlock_PID_thread.png" alt="PID및 스레드 상태 진단" width="850">
+<img src="/images/deadlock_PID_thread.png" alt="PID및 스레드 상태 진단" width="850">
 
 ---
 
-<img src="./images/deadlock_final_log.png" alt="마지막 로그 지점" width="850">
+<img src="/images/deadlock_final_log.png" alt="마지막 로그 지점" width="850">
 
 - PID 모두 유지
 - 스레드 3개 모두 futex_wait (락 대기), CPU 0.0%(자원 얻지 못해 완전 동결)
@@ -125,13 +125,13 @@ tail -n 10 $AGENT_LOG_DIR/agent_app.log
 
 
 
-<img src="./images/deadlock_after.png" alt="THREAD:False" width="850">
+<img src="/images/deadlock_after.png" alt="THREAD:False" width="850">
 
 ---
-<img src="./images/Deadlock_PID_after.png" alt="THREAD:False" width="850">
+<img src="/images/Deadlock_PID_after.png" alt="THREAD:False" width="850">
 
 ---
-<img src="./images/deadlock_after_.png" alt="THREAD:False" width="850">
+<img src="/images/deadlock_after_.png" alt="THREAD:False" width="850">
 
 - 파일 크기가 14857 bytes에서 16154 bytes로 증가하였고 수정 시각도 최신 시간으로 갱신 => 로그가 멈추지 않고 정상적으로 계속 기록
 

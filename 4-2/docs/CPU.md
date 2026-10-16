@@ -61,7 +61,7 @@
 ---
 **CPU_MAC_OCCUPY=100**
 
-<img src="./images/CPU_100.png" alt="CPU_MAX_OCCUPY=100" width="850">
+<img src="/images/CPU_100.png" alt="CPU_MAX_OCCUPY=100" width="850">
 
 
 **CPU_MAC_OCCUPY=80**
@@ -85,11 +85,11 @@ tail -f /var/log/agent-app/monitor.log
 ```bash
 top -b -d 3 -n 15 -p $(pgrep -n -x agent-leak-app-)
 ```
-<img src="./images/CPU_memory.png" alt="WATCHDOG" width="850">
+<img src="/images/CPU_memory.png" alt="WATCHDOG" width="850">
 
 ---
 
-<img src="./images/CPU_top_log.png" alt="top_CPU 급상승" width="850">
+<img src="/images/CPU_top_log.png" alt="top_CPU 급상승" width="850">
 
 - 앱 Current Load 5% → 55.51%, 프로세스 CPU 0.3% → 2.0%
 - 시스템 idle은 99.3~96.8%로 변화 없음
@@ -104,10 +104,10 @@ top -b -d 3 -n 15 -p $(pgrep -n -x agent-leak-app-)
 
 **CPU_MAC_OCCUPY=30**
 
-<img src="./images/cpu쿨다운.png" alt="CPU_MAC_OCUUPY30" width="850">
+<img src="/images/cpu쿨다운.png" alt="CPU_MAC_OCUUPY30" width="850">
 
 ---
-<img src="./images/CPU_30_log.png" alt="Watchdog 종료 없음" width="850">
+<img src="/images/CPU_30_log.png" alt="Watchdog 종료 없음" width="850">
 
 - 30%에서 Peak reached → 5%까지 cooldown → 다시 증가를 반복
 - Watchdog 종료 없음
