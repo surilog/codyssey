@@ -27,6 +27,7 @@ class DoublyLinkedList:
             curr=curr.next
         return result
 
+    #음수 인덱스 지원(LANGE명령어 지원)
     def get_range(self, start: int, stop: int) -> list:
         elements = self.to_list()
         total = len(elements)
@@ -43,7 +44,7 @@ class DoublyLinkedList:
         stop = min(total -1 , stop)
         return elements[start : stop +1]
 
-    # 삽입 시 노드 연결 해주는 함수
+    # 삽입 시 노드 연결 맨 앞에 해주는 함수
     def insert_front_node(self, node:Node):
         first_node = self.dummy_head.next # 처음 노드를 추가 할 때는 first_node가 dummy_tail을 가리킴
 
@@ -74,17 +75,11 @@ class DoublyLinkedList:
         return new_node
 
     def insert_back(self, key, value) -> Node:
-        new_mode = Node(key,value)
-        last_node = self.dummy_tail.prev
+        new_node = Node(key,value)
+        self.insert_back_node(new_node)
+        self.dummy_tail.prev = new_node
 
-        new_mode.prev = last_node
-        new_mode.next = self.dummy_tail
-        last_node.next = new_mode
-        self.dummy_tail.prev = new_mode
-
-        self.size +=1
-
-        return new_mode
+        return new_node
 
 
     def remove_node(self, node: Node) -> Node:

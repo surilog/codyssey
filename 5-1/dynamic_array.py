@@ -16,11 +16,11 @@ class DynamicArray:
     def _resize(self, new_capacity: int) -> None:
         new_array = [None] * new_capacity
         for i in range(self.size):
-            new_array[i] = self.array[i]
+            new_array[i] = self._array[i]
 
         self._array = new_array
         self.capacity = new_capacity
-
+#평소에는 O(1) , 용량 늘릴 때만 O(N)
     def append(self, item) -> None:
         if self.size == self.capacity:
             self._resize(self.capacity * 2)

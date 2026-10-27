@@ -17,14 +17,18 @@ class RedisCommandExecutor:
             return f"(error) ERR unknown command '{cmd_tokens[0]}'"
         return handler(args)
     
+    
+    def _err_args(self, cmd_name: str) -> str:
+        return f"(error) ERR wrong nubmer of arguments for '{cmd_name}' command "
+    def _err_int_args(self) -> str:
+        return "(error) ERR value is not an integer or out of range"
     def _check_args(self, args:list, expected: int, cmd_name: str) -> str | None:
-        if len(args) != expected:
-            return f"(error) ERR wrong number of arguments for '{cmd_name}' command"
-        return None
-
+            if len(args) != expected:
+                return self._err_args(cmd_name)
+            return None
     def do_SET(self, args:list) -> str:
         if len(args) < 2:
-            return self.err_args("set")
+            return self._err_args("set")
 
         key = args[0]
         value = args[1]
@@ -85,10 +89,10 @@ class RedisCommandExecutor:
             if param_name == "maxmemory":
                 try:
                     bytes_val = int(args[2])
-                    return self.redis.config_set_maxmeory(bytes_val)
+                    return self.redis.config_set_maxmemory(bytes_val)
                 except ValueError:
                     return self._err_int_range()
-        return "(error) ERR wrong number of arguments or section for 'info'"
+        return "(error) ERR wrong number of arguments or section for 'config'"
 
     def do_INFO(self, args:list) -> str:
         if len(args) == 1 and args[0].lower() =="memory":
@@ -164,7 +168,7 @@ class RedisCommandExecutor:
         responses = []
         for ch in args:
             count = self.redis.unsubscribe(client_id,ch)
-            responses.append(f'1) "unsubscribe"\n2) "{ch}"\n3 (integer) {count}')
+            responses.append(f'1) "unsubscribe"\n2) "{ch}"\n3) (integer) {count}')
 
         return "\n".join(responses)
 
@@ -174,7 +178,7 @@ class RedisCommandExecutor:
 
         channel = args[0]
         message = args[1]
-        receivers = self.redis.publish(channel, message)
+        receivers = self.redis.publish(channel, message) #메시지 전달받은 총 구독자 수
 
         output = [f"(integer) {receivers}"]
         client_id = "cli_client"
@@ -204,7 +208,7 @@ class RedisCommandExecutor:
         try:
             score = float(score_str)
         except ValueError:
-            return "(error) ERR value is not a valid front or integer"
+            return "(error) ERR value is not a valid float or integer"
         self.redis.zadd(key, score, member)
         return "(integer) 1"
 

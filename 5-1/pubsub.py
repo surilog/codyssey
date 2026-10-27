@@ -82,6 +82,7 @@ class PubSubBroker:
             return chan_list.size
 
         return 0
+    
     def publish(self,
                  channel:str, message:str)->int:
         """메시지 발행 : 채널의 모든 구독자 Queue에 메시지 적재 (수신사 수 반환)"""

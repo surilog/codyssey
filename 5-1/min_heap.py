@@ -17,7 +17,7 @@ class MinHeap:
 
 
     def _heapify_up(self, index : int):
-        while index > 0:
+        while index > 0: #루트 노드에 도달할 때까지 반복 , 시간 복잡도 : 트리의 높이만큼 위로 올라가니 O(logN)
             parent_idx = self._parent(index)
             if self.heap[index][0] < self.heap[parent_idx][0]:
                 self._swap(index, parent_idx)
@@ -46,7 +46,7 @@ class MinHeap:
                 self._swap(index, smallest)
                 index = smallest
             else:
-                break
+                break # 시간 복잡도: 트리의 높이만큼만 하강하므로 O(log N)
 
     def pop(self):
         if self.is_empty():
@@ -55,7 +55,7 @@ class MinHeap:
             return self.heap.pop()
 
         root = self.heap[0]
-        self.heap[0] = self.heap.pop()
+        self.heap[0] = self.heap.pop() #맨 마지막 노드를 떼어내서 루트(0번) 자리에 덮어씀
         self._heapify_down(0)
         return root
 

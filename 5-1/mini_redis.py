@@ -64,7 +64,8 @@ class MiniRedis:
                break
            
            self.ttl_heap.pop()
-           if(hasattr(self, "key_ttl")and key in self.key_ttl and self.key_ttl[key]!=expire_at):
+           if(hasattr(self, "key_ttl")and key in self.key_ttl and self.key_ttl[key]!=expire_at): 
+               #
                continue
            lru_node = self.db.get(key)
            if lru_node:
@@ -101,8 +102,9 @@ class MiniRedis:
             self.key_ttl[key] = expire_at
             self.ttl_heap.push(expire_at,key)
         else:
+#ttl 인자가 주어지지 않은(else) 경우, 장부(self.key_ttl)에서 해당 키의 만료 기록을 완전히 지움(pop)
             self.key_ttl.pop(key,None)
-
+        #메모리 제한 초과 시 lru 노드 계속 제거
         if self.maxmemory > 0:
                     while (self.used_memory > self.maxmemory and self.lru_list.size > 0):
                         oldest_node = self.lru_list.remove_back()
@@ -113,7 +115,7 @@ class MiniRedis:
                             self.evicted_keys += 1
         return "OK"
 
-
+    #해시맵에서 O(1)로 노드 찾기
     def get(self, key: str) -> str:
         self._clean_expired()
         lru_node = self.db.get(key)
@@ -149,7 +151,7 @@ class MiniRedis:
         self._clean_expired()
         return self.db.keys()
 
-    def config_set_maxmeory(self, bytes_val: int):
+    def config_set_maxmemory(self, bytes_val: int):
         self.maxmemory = max(0, bytes_val)
         return "OK"
 
