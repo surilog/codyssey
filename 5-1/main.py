@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "scripts"))
 from mini_redis import MiniRedis
 from command_executor import RedisCommandExecutor
 import shlex 

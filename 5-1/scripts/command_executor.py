@@ -19,8 +19,10 @@ class RedisCommandExecutor:
     
     
     def _err_args(self, cmd_name: str) -> str:
-        return f"(error) ERR wrong nubmer of arguments for '{cmd_name}' command "
+        return f"(error) ERR wrong number of arguments for '{cmd_name}' command"
     def _err_int_args(self) -> str:
+        return "(error) ERR value is not an integer or out of range"
+    def _err_int_range(self) -> str:
         return "(error) ERR value is not an integer or out of range"
     def _check_args(self, args:list, expected: int, cmd_name: str) -> str | None:
             if len(args) != expected:
