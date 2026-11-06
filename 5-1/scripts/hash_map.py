@@ -9,8 +9,6 @@ class HashMap:
             self.buckets.append(DoublyLinkedList()) #배열의 16개 칸 마다 각각 빈 이중 연결 리스트를 하나씩 배치
 
 
-    #책 제목(Key, 예: "user:1")을 숫자 방 번호(0~15번 버킷)로 바꿔주는 사서의 계산 규칙
-    #즉, 임의의 문자열 키를 정수로 바꿈
     def _hash(self, key: str) -> int :
 
         return hash(str(key)) % self.capacity 

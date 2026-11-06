@@ -65,11 +65,11 @@ class MiniRedis:
            
            self.ttl_heap.pop()
            if(hasattr(self, "key_ttl")and key in self.key_ttl and self.key_ttl[key]!=expire_at): 
-               #
                continue
+           # key_ttl 속성 존재 확인 => key_ttl에 만료시간이 기록 확인 => min_hip과 장부의 key_ttl의 만료시간이 다르면, 이미 갱신된 키이므로 삭제하지 않음
            lru_node = self.db.get(key)
            if lru_node:
-                self.used_memory -= self._get_bytes(lru_node.key, lru_node.value)
+                self.used_memory = max(0,self.used_memory - self._get_bytes(lru_node.key, lru_node.value))
                 self.lru_list.remove_node(lru_node)
                 self.db.remove(key)
                 print(f"[TTL 만료 삭제] 키 '{key}'가 자동으로 삭제되었습니다.")
@@ -87,7 +87,7 @@ class MiniRedis:
 
         if lru_node:
             # 기존 키 존재 시 이전 바이트 차감 후 값 수정
-            self.used_memory -= self._get_bytes(lru_node.key, lru_node.value)
+            self.used_memory = max(0, self.used_memory - self._get_bytes(lru_node.key, lru_node.value))
             lru_node.value = value
             self.used_memory += entry_bytes
             self.lru_list.move_to_front(lru_node)
@@ -103,13 +103,14 @@ class MiniRedis:
             self.ttl_heap.push(expire_at,key)
         else:
 #ttl 인자가 주어지지 않은(else) 경우, 장부(self.key_ttl)에서 해당 키의 만료 기록을 완전히 지움(pop)
-            self.key_ttl.pop(key,None)
+            if hasattr(self, "key_ttl"):
+                self.key_ttl.pop(key,None)
         #메모리 제한 초과 시 lru 노드 계속 제거
         if self.maxmemory > 0:
                     while (self.used_memory > self.maxmemory and self.lru_list.size > 0):
                         oldest_node = self.lru_list.remove_back()
                         if oldest_node:
-                            self.used_memory -= self._get_bytes(oldest_node.key, oldest_node.value)
+                            self.used_memory = max(0, self.used_memory - self._get_bytes(oldest_node.key, oldest_node.value))
                             self.db.remove(oldest_node.key)
                             self.key_ttl.pop(oldest_node.key, None)
                             self.evicted_keys += 1
@@ -132,7 +133,7 @@ class MiniRedis:
         self.key_ttl.pop(key,None)
         lru_node = self.db.get(key)
         if lru_node :
-            self.used_memory -= self._get_bytes(lru_node.key, lru_node.value)
+            self.used_memory = max(0, self.used_memory - self._get_bytes(lru_node.key, lru_node.value))
             self.lru_list.remove_node(lru_node)
             self.db.remove(key)
             return 1
@@ -175,6 +176,9 @@ class MiniRedis:
             return 1
 
         expire_at = time.time() + seconds
+
+        if hasattr(self, "key_ttl"):
+            self.key_ttl[key] = expire_at
         self.ttl_heap.push(expire_at,key)
         return 1
 
@@ -184,17 +188,11 @@ class MiniRedis:
         if lru_node is None:
             return -2
 
-        min_expire = None
-        for expire_at , k in self.ttl_heap.heap:
-            if k ==key:
-                if min_expire is None or expire_at < min_expire:
-                    min_expire = expire_at
+        if not hasattr(self, "key_ttl") or key not in self.key_ttl:
+            return -1
 
-
-        if min_expire is None:
-                return -1
-               
-        remaining = int(min_expire - time.time())
+        expire_at = self.key_ttl[key]   
+        remaining = int(expire_at - time.time())
         return max(0, remaining)
         
 

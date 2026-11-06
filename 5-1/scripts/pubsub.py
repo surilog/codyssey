@@ -18,7 +18,7 @@ class PubSubBroker:
 
     def subscribe(self, client_id : str, channel: str) -> int:
         """채널에 구독자 등록 후 , 해당 클라이언트의 총 구독 채널 수 반환"""
-        #1. 채널의 구독자 목록 가져오기 (없으면 새로 생성)
+        #채널의 구독자 목록 가져오기 (없으면 새로 생성)
         sub_list = self.channels.get(channel)
         if sub_list is None:
             sub_list = DoublyLinkedList()
@@ -36,7 +36,7 @@ class PubSubBroker:
         if not already_sub:
             sub_list.insert_back(client_id,Subscriber(client_id))
 
-        # 2. 클라이언트의 구독 중 채널 목록 갱신
+        #  클라이언트의 구독 중 채널 목록 갱신
         chan_list = self.client_channels.get(client_id)
         if chan_list is None:
             chan_list = DoublyLinkedList()
@@ -57,7 +57,7 @@ class PubSubBroker:
 
     def unsubscribe(self, client_id :str, channel:str) -> int:
         """채널 구독 취소 후, 남은 구독 채널 수 반환"""
-        # 1. 채널 구독자 목록에서 제거
+        #  채널 구독자 목록에서 제거
 
         sub_list = self.channels.get(channel)
         if sub_list:

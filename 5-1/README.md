@@ -33,7 +33,7 @@
 * **$O(1)$ LRU 캐시 메커니즘**: `HashMap`의 즉시 탐색과 `DoublyLinkedList`의 포인터 조작을 결합하여 메모리 초과 시 가장 오래 참조되지 않은 키를 $O(1)$로 축출(Eviction)합니다.
 * **$O(1)$ TTL 모니터링**: `MinHeap` 우선순위 큐를 통해 데이터베이스 전체를 스캔하지 않고도 가장 먼저 만료될 데이터를 $O(1)$로 감지하고 제거합니다.
 * **List 자료형 지원**: 자체 제작한 `DoublyLinkedList`를 밸류 컨테이너로 재사용하여 $O(1)$ 양방향 삽입/삭제(`LPUSH`, `LPOP`) 및 범위 탐색(`LRANGE`)을 제공합니다.
-* **Sorted Set (ZSet) 정렬 집합**: `BinarySearchTree(BST)`를 활용하여 스코어 기반 $O(\log N)$ 삽입(`ZADD`)과 중위 순회 오름차순 정렬 조회(`ZRANGE`)를 지원합니다.
+* **Sorted Set (ZSet) 정렬 집합**: `BinarySearchTree(BST)`를 활용하여 스코어 기반 $O(log N)$ 삽입(`ZADD`)과 중위 순회 오름차순 정렬 조회(`ZRANGE`)를 지원합니다.
 * **비동기 1:N 메시징 브로커**: `HashMap`, `DoublyLinkedList`, `Queue`를 결합하여 실시간 채널 기반 발행/구독(Pub/Sub) 시스템을 구축합니다.
 
 ---
@@ -99,7 +99,7 @@ mini-redis/
 ├── dynamic_array.py            # [기반 메모리] 2배 확장(Resizing) 지원 저수준 동적 배열
 ├── linear_structures.py        # [선형] 컴포지션 패턴 기반 Stack, Queue, Deque
 ├── binary_tree.py              # [트리] 이진 트리 노드 및 4대 순회(전위/중위/후위/레벨)
-├── binary_search_tree.py       # [정렬 트리] $O(\log N)$ 삽입/탐색 및 중위 순회 정렬(ZSet)
+├── binary_search_tree.py       # [정렬 트리] $O(log N)$ 삽입/탐색 및 중위 순회 정렬(ZSet)
 ├── pubsub.py                   # [브로커] 1:N 메시지 발행/구독 및 구독자별 큐 버퍼링 엔진
 ├── docs/                       #  [심층 기술 및 아키텍처 명세서 디렉토리]
 │   ├── Redis_엔진_메모리_및_명령어_처리.md # └─ 엔진 오케스트레이션, LRU 축출, 메모리 모델 및 CLI 규격
@@ -125,8 +125,8 @@ mini-redis/
 | **[`mini_redis.py`](mini_redis.py)** | 데이터베이스 메인 오케스트레이션 | 해시맵 + 연결 리스트 + 최소 힙 + BST 통합 | $O(1)$ LRU, TTL |
 | **[`hash_map.py`](hash_map.py)** | Key 기반 데이터 초고속 매핑 | 다항 롤링 해시, 개별 체이닝, 로드 팩터($0.75$) 2배 확장 | 평균 $O(1)$ |
 | **[`doubly_linked_list.py`](doubly_linked_list.py)**| LRU 접근 추적 및 List 자료형 | 더미 노드(Dummy Head/Tail) Sentinel 패턴, 범위 슬라이싱 | 삽입/삭제: $O(1)$ |
-| **[`min_heap.py`](min_heap.py)** | TTL 만료 예정 시각 스케줄링 | 배열 기반 완전 이진 트리, 지연 삭제(Lazy Deletion) | 조회 $O(1)$, 삽입 $O(\log N)$ |
-| **[`binary_search_tree.py`](binary_search_tree.py)**| Sorted Set (ZSet) 스코어 정렬 | In-order Successor 삭제 대체, 중위 순회 오름차순 정렬 | 삽입 평균 $O(\log N)$ |
+| **[`min_heap.py`](min_heap.py)** | TTL 만료 예정 시각 스케줄링 | 배열 기반 완전 이진 트리, 지연 삭제(Lazy Deletion) | 조회 $O(1)$, 삽입 $O(log N)$ |
+| **[`binary_search_tree.py`](binary_search_tree.py)**| Sorted Set (ZSet) 스코어 정렬 | In-order Successor 삭제 대체, 중위 순회 오름차순 정렬 | 삽입 평균 $O(log N)$ |
 | **[`pubsub.py`](pubsub.py)** | 비동기 실시간 메시징 브로커 | 양방향 해시맵 교차 매핑, 구독자별 FIFO 큐 우편함 | 발행 $O(K)$, 구독 $O(1)$ |
 | **[`dynamic_array.py`](dynamic_array.py)** | 물리적 연속 메모리 공간 관리 | 기하급수적 용량 2배 확장(Geometric Doubling) | 분할 상환 $O(1)$ |
 | **[`linear_structures.py`](linear_structures.py)**| 선형 데이터 구조 지원 | 이중 연결 리스트 기반 어댑터 컴포지션(Stack, Queue, Deque) | 전체 연산 $O(1)$ |
@@ -173,7 +173,7 @@ mini-redis/
 ### 4) Sorted Set (ZSet): `BinarySearchTree`를 활용한 랭킹 정렬 시스템 (`ZADD`, `ZRANGE`)
 * Redis의 정렬 집합은 각 멤버에 실수형 점수(Score)가 부여되어 항상 정렬된 상태를 유지해야 합니다.
 * `mini_redis.py`의 `self.zsets` 해시맵에 키별로 `BinarySearchTree` 인스턴스를 관리합니다.
-* `ZADD` 실행 시 `(score, member)` 튜플을 BST에 삽입하여 평균 $O(\log N)$에 정렬 위치를 찾아 저장합니다.
+* `ZADD` 실행 시 `(score, member)` 튜플을 BST에 삽입하여 평균 $O(log N)$에 정렬 위치를 찾아 저장합니다.
 * `ZRANGE` 실행 시 BST의 **중위 순회(In-order Traversal)**를 수행하여 추가 정렬 라이브러리 없이도 $O(N)$ 시간 안에 낮은 점수부터 오름차순으로 정렬된 멤버 목록을 즉시 추출합니다.
 
 ### 5) 최소 힙(Min-Heap)을 이용한 TTL 관리 및 지연 삭제(Lazy Deletion)
@@ -195,7 +195,7 @@ Mini-Redis CLI는 실제 Redis와 동일한 문법 규격과 응답 프로토콜
 | **`DEL`** | `DEL <key>` | 키를 삭제하며 데이터, LRU 목록, 메모리 사용량에서 완전히 제거합니다. | `(integer) 1` (없으면 `0`) |
 | **`EXISTS`**| `EXISTS <key>` | 키의 존재 여부를 확인합니다. (만료 여부 선검사) | `(integer) 1` (없으면 `0`) |
 | **`DBSIZE`**| `DBSIZE` | 데이터베이스에 저장된 총 유효 키의 개수를 반환합니다. | `(integer) <count>` |
-| **`KEYS`** | `KEYS` | 현재 저장된 모든 키의 목록을 인덱스와 함께 출력합니다. | `1) "key1"\n2) "key2"` |
+| **`KEYS`** | `KEYS` | 현재 저장된 모든 키의 목록을 인덱스와 함께 출력합니다. | `1) "key1"n2) "key2"` |
 
 ### 2) List 데이터 조작 명령어 (DoublyLinkedList 기반)
 
@@ -203,7 +203,7 @@ Mini-Redis CLI는 실제 Redis와 동일한 문법 규격과 응답 프로토콜
 | :--- | :--- | :--- | :--- |
 | **`LPUSH`** | `LPUSH <key> <value>` | 리스트의 헤드(맨 앞)에 새로운 요소를 삽입하고 LRU를 갱신합니다. 키가 없으면 새 리스트를 생성합니다. 기존 키가 리스트가 아니면 `WRONGTYPE` 에러를 반환합니다. | `(integer) <리스트 요소 수>` |
 | **`LPOP`** | `LPOP <key>` | 리스트의 헤드(맨 앞)에서 요소를 꺼내어 제거하고 반환합니다. 리스트가 비어있거나 키가 없으면 `(nil)`을 반환하며, 마지막 요소를 꺼내면 키가 자동 삭제됩니다. | `"value"` 또는 `(nil)` |
-| **`LRANGE`**| `LRANGE <key> <start> <stop>` | 리스트의 `<start>`부터 `<stop>`까지의 요소 목록을 조회합니다. 0 기반 인덱스 및 음수 인덱스(예: `-1`은 맨 끝)를 완벽 지원합니다. | `1) "val1"\n2) "val2"` 또는 `(empty array)` |
+| **`LRANGE`**| `LRANGE <key> <start> <stop>` | 리스트의 `<start>`부터 `<stop>`까지의 요소 목록을 조회합니다. 0 기반 인덱스 및 음수 인덱스(예: `-1`은 맨 끝)를 완벽 지원합니다. | `1) "val1"n2) "val2"` 또는 `(empty array)` |
 
 ### 3) Sorted Set (ZSet) 데이터 조작 명령어 (BST 기반)
 
@@ -230,8 +230,8 @@ Mini-Redis CLI는 실제 Redis와 동일한 문법 규격과 응답 프로토콜
 
 | 명령어 | 문법 | 설명 | 반환값 |
 | :--- | :--- | :--- | :--- |
-| **`SUBSCRIBE`** | `SUBSCRIBE <channel> [ch2 ...]` | 지정한 채널(들)을 구독합니다. 구독자 전용 메시지 큐가 자동 배정됩니다. | `1) "subscribe"\n2) "<channel>"\n3) (integer) <구독수>` |
-| **`UNSUBSCRIBE`**| `UNSUBSCRIBE <channel> [ch2 ...]`| 지정한 채널(들)의 구독을 해제합니다. 마지막 구독자 탈퇴 시 채널 자원을 회수합니다. | `1) "unsubscribe"\n2) "<channel>"\n3) (integer) <잔여수>` |
+| **`SUBSCRIBE`** | `SUBSCRIBE <channel> [ch2 ...]` | 지정한 채널(들)을 구독합니다. 구독자 전용 메시지 큐가 자동 배정됩니다. | `1) "subscribe"n2) "<channel>"n3) (integer) <구독수>` |
+| **`UNSUBSCRIBE`**| `UNSUBSCRIBE <channel> [ch2 ...]`| 지정한 채널(들)의 구독을 해제합니다. 마지막 구독자 탈퇴 시 채널 자원을 회수합니다. | `1) "unsubscribe"n2) "<channel>"n3) (integer) <잔여수>` |
 | **`PUBLISH`** | `PUBLISH <channel> <msg>` | 채널의 모든 구독자 우편함(Queue)에 메시지를 동시에 복사 배달합니다. | `(integer) <수신 구독자 수>` (구독 중인 CLI면 즉시 수신 알림) |
 | **`PUBSUB`** | `PUBSUB CHANNELS` | 현재 1명 이상의 구독자가 활성화되어 있는 모든 활성 채널 목록을 조회합니다. | 채널 목록 배열 |
 
@@ -241,7 +241,9 @@ Mini-Redis CLI는 실제 Redis와 동일한 문법 규격과 응답 프로토콜
 
 ### 1) 메모리 점유율 산정 기준 (공식)
 포인터나 노드 오버헤드를 제외한 순수 데이터 페이로드 크기를 추적합니다.
-$$\text{used\_memory} = \sum_{\text{all keys}} \Big( \text{len}(\text{utf8}(\text{key})) + \text{len}(\text{utf8}(\text{value})) \Big)$$
+```
+{used_memory} = sum_{{all keys}} Big( {len}({utf8}({key})) + {len}({utf8}({value})) Big)
+```
 
 ### 2) LRU 축출(Eviction) 및 OOM 방어 프로세스
 1. **단일 엔트리 검사**: 새로 저장하려는 단일 키-값의 바이트 크기가 `maxmemory`보다 크면, 저장을 거부하고 즉시 `(error) OOM command not allowed...` 에러를 반환합니다.
@@ -268,74 +270,240 @@ python main.py
 
 ### 2) 종합 CLI 세션 실행 예시
 
+### 1. String 기본 조작 및 TTL 설정
 ```text
-==================================================
- welcome to Mini Redis CLI!
- 종료하려면 'exit' 또는 'quit'를 입력하세요.
-==================================================
-# 1. String 기본 조작 및 TTL 설정
-mini-redis> SET user:1 "Alice" EX 60
+mini-redis> SET user:1 "Alice"s
 OK
+
 mini-redis> GET user:1
 "Alice"
-mini-redis> TTL user:1
-(integer) 58
 
-# 2. List 명령어 (LPUSH, LRANGE, LPOP)
-mini-redis> LPUSH mylist "apple"
+mini-redis> EXISTS user:1
 (integer) 1
-mini-redis> LPUSH mylist "banana"
+
+mini-redis> EXISTS user:99
+(integer) 0
+
+mini-redis> SET user:2 "Bob"
+OK
+
+mini-redis> DBSIZE
 (integer) 2
-mini-redis> LPUSH mylist "cherry"
-(integer) 3
+
+mini-redis> KEYS
+1) "user:1"
+2) "user:2"
+
+mini-redis> DEL user:1
+(integer) 1
+
+mini-redis> GET user:1
+(nil)
+
+mini-redis> DEL user:1
+(integer) 0
+
+mini-redis> DBSIZE
+(integer) 1
+```
+
+### 2.List 타입 데이터 조작 검증
+
+```text
+# 1. 왼쪽(앞)으로 연속 삽입
+mini-redis> LPUSH mylist "world"
+(integer) 1
+
+mini-redis> LPUSH mylist "hello"
+(integer) 2
+
+# 2. 전체 범위 조회 (0부터 -1까지)
 mini-redis> LRANGE mylist 0 -1
-1) "cherry"
-2) "banana"
-3) "apple"
+1) "hello"
+2) "world"
+
+# 3. 왼쪽 원소 꺼내기 (LPOP)
 mini-redis> LPOP mylist
-"cherry"
+"hello"
+
 mini-redis> LRANGE mylist 0 -1
-1) "banana"
-2) "apple"
+1) "world"
 
-# 3. Sorted Set (ZSet) 명령어 (ZADD, ZRANGE)
-mini-redis> ZADD exam 85.0 "Bob"
-(integer) 1
-mini-redis> ZADD exam 98.5 "Alice"
-(integer) 1
-mini-redis> ZADD exam 72.0 "Charlie"
-(integer) 1
-mini-redis> ZRANGE exam
-1) "Charlie" (Score : 72.0)
-2) "Bob" (Score : 85.0)
-3) "Alice" (Score : 98.5)
+# 4. 마지막 남은 원소 꺼내기 -> 빈 리스트가 되면 DB에서 키 자동 삭제
+mini-redis> LPOP mylist
+"world"
 
-# 4. 메모리 제한 및 LRU 자동 축출
-mini-redis> CONFIG SET maxmemory 30
+mini-redis> LPOP mylist
+(nil)
+
+mini-redis> EXISTS mylist
+(integer) 0
+```
+
+### 3. TTL 만료 관리 & 최소 힙(Min-Heap) 검증
+```text
+# 1. SET 시 EX 옵션으로 5초 만료 시간 부여
+mini-redis> SET temp "secret" EX 5
 OK
-mini-redis> SET k1 "1234567890"
+
+mini-redis> TTL temp
+(integer) 5
+
+mini-redis> GET temp
+"secret"
+
+# (5초 대기 후 실행)
+mini-redis> TTL temp
+(integer) -2
+
+mini-redis> GET temp
+(nil)
+
+# 2. 만료 시간이 없는 일반 영구 키 확인
+mini-redis> SET perm "forever"
 OK
-mini-redis> SET k2 "abcdefghij"
+
+mini-redis> TTL perm
+(integer) -1
+
+# 3. 기존 키에 EXPIRE 명령으로 만료 시간(10초) 부여
+mini-redis> EXPIRE perm 10
+(integer) 1
+
+mini-redis> TTL perm
+(integer) 9
+
+mini-redis> EXPIRE nokey 10
+(integer) 0
+
+# 4. [중요 엣지케이스] SET으로 덮어쓸 때 기존 만료 시간(TTL) 초기화 검증
+mini-redis> SET temp2 "v1" EX 100
 OK
+
+mini-redis> SET temp2 "v2"
+OK
+
+mini-redis> TTL temp2
+(integer) -1
+```
+
+## 4.메모리 제한(`maxmemory`) & LRU 자동 축출 검증
+
+```text
+# 1. 메모리 한도를 15바이트로 설정
+mini-redis> CONFIG SET maxmemory 15
+OK
+
 mini-redis> INFO memory
-used_memory:24
-maxmemory:30
-evicted_keys:1
+used_memory:0 maxmemory:15 evicted_keys:0
 
-# 5. Pub/Sub 실시간 메시징
-mini-redis> SUBSCRIBE news
+# 2. 단일 엔트리가 maxmemory를 초과할 때 OOM 방어 검증 (24바이트 > 15바이트)
+mini-redis> SET huge "12345678901234567890"
+(error) OOM command not allowed when used_memory > 'maxmemory'
+
+# 3. 데이터 삽입 (a: 5B, b: 5B -> 총 10B)
+mini-redis> SET a "1234"
+OK
+
+mini-redis> SET b "1234"
+OK
+
+# 4. a를 조회하여 LRU 헤드 최신 상태로 갱신 (가장 오래된 키는 b가 됨)
+mini-redis> GET a
+"1234"
+
+# 5. c(7B) 삽입 -> 10 + 7 = 17B로 15B 한도 초과! (가장 오래된 b가 자동 축출)
+mini-redis> SET c "123456"
+OK
+
+# 6. 축출 결과 검증
+mini-redis> GET b
+(nil)
+
+mini-redis> GET a
+"1234"
+
+mini-redis> INFO memory
+used_memory:12 maxmemory:15 evicted_keys:1
+
+# 7. 테스트 후 메모리 제한 무제한(0) 복구
+mini-redis> CONFIG SET maxmemory 0
+OK
+```
+
+## 5. 발행-구독 (Pub/Sub) 메시징 브로커 검증
+
+```text
+# 1. 복수 채널 동시 구독
+mini-redis> SUBSCRIBE news sports
 1) "subscribe"
 2) "news"
 3) (integer) 1
+1) "subscribe"
+2) "sports"
+3) (integer) 2
+
+# 2. 활성 채널 목록 조회
+mini-redis> PUBSUB CHANNELS
+1) "news"
+2) "sports"
+
+# 3. 메시지 발행 (수신한 구독자 수 반환)
 mini-redis> PUBLISH news "Breaking News!"
-[메시지수신]
-1) "message"
-2 "news"
-3 " Breaking News!"
 (integer) 1
 
+# 4. 채널 구독 취소
+mini-redis> UNSUBSCRIBE news
+1) "unsubscribe"
+2) "news"
+3) (integer) 1
+```
+
+### 6.ZSET (이진 탐색 트리 - BST) 정렬 랭킹 검증
+
+```text
+# 1. 점수를 무작위 순서로 삽입
+mini-redis> ZADD rank 85 "Bob"
+(integer) 1
+
+mini-redis> ZADD rank 95 "Alice"
+(integer) 1
+
+mini-redis> ZADD rank 70 "Charlie"
+(integer) 1
+
+# 2. 범위 조회 시 자동 오름차순 정렬 확인
+mini-redis> ZRANGE rank
+1) "Charlie" (Score: 70.0)
+2) "Bob" (Score: 85.0)
+3) "Alice" (Score: 95.0)
+
+# 3. 비어있는 정렬 집합 조회
+mini-redis> ZRANGE empty_rank
+(empty list or set)
+```
+
+### 7.에러 처리 표준 & CLI 종료 검증
+
+```text
+# 1. 알 수 없는 명령어 에러
+mini-redis> UNKNOWNCMD
+(error) ERR unknown command 'UNKNOWNCMD'
+
+# 2. 인자 개수 부족 에러
+mini-redis> SET mykey
+(error) ERR wrong number of arguments for 'set' command
+
+# 3. 정수 파싱 실패 에러
+mini-redis> CONFIG SET maxmemory abc
+(error) ERR value is not an integer or out of range
+
+# 4. 부동소수점 점수 파싱 실패 에러
+mini-redis> ZADD rank invalid_score "Dave"
+(error) ERR value is not a valid float or integer
+
+# 5. CLI 정상 종료
 mini-redis> exit
-Mini Redis를 종료합니다.
 ```
 
 ---
@@ -365,13 +533,13 @@ Mini Redis를 종료합니다.
 | :--- | :--- | :--- | :---: | :---: | :--- |
 | **값 조회** | `GET` / `EXISTS` | `HashMap` + `DoublyLinkedList` | **$O(1)$** | $O(N)$ | 해시 충돌 없을 시 즉시 탐색 및 LRU 헤드 이동 |
 | **값 저장** | `SET` (일반) | `HashMap` + `DoublyLinkedList` | **$O(1)$** | $O(N)$ | 노드 주소 캐싱 기반 즉시 삽입 및 헤드 이동 |
-| **캐시 추출** | `SET` (LRU 추출 시) | `DoublyLinkedList` + `HashMap` | **$O(K)$** | $O(K \times N)$ | $K$ = 메모리 확보를 위해 방출해야 하는 오래된 노드 수 |
+| **캐시 추출** | `SET` (LRU 추출 시) | `DoublyLinkedList` + `HashMap` | **$O(K)$** | $O(K times N)$ | $K$ = 메모리 확보를 위해 방출해야 하는 오래된 노드 수 |
 | **리스트 헤드 삽입** | `LPUSH` | `DoublyLinkedList` | **$O(1)$** | $O(1)$ | 더미 헤드 바로 뒤 4줄 포인터 교환 삽입 |
 | **리스트 헤드 추출** | `LPOP` | `DoublyLinkedList` | **$O(1)$** | $O(1)$ | 더미 헤드 바로 뒤 노드 제거 및 반환 |
-| **리스트 범위 조회** | `LRANGE` | `DoublyLinkedList` | **$O(K)$** | $O(N)$ | $K$ = 슬라이싱 범위($\text{stop} - \text{start}$) 내 요소 개수 |
-| **정렬 집합 원소 삽입**| `ZADD` | `BinarySearchTree` | **$O(\log N)$** | $O(N)$ | 점수(Score) 기준 이진 탐색 트리 삽입 |
+| **리스트 범위 조회** | `LRANGE` | `DoublyLinkedList` | **$O(K)$** | $O(N)$ | $K$ = 슬라이싱 범위(${stop} - {start}$) 내 요소 개수 |
+| **정렬 집합 원소 삽입**| `ZADD` | `BinarySearchTree` | **$O(log N)$** | $O(N)$ | 점수(Score) 기준 이진 탐색 트리 삽입 |
 | **정렬 집합 오름차순 조회**| `ZRANGE` | `BinarySearchTree` | **$O(N)$** | $O(N)$ | BST 중위 순회(In-order Traversal) 기반 정렬 |
-| **만료 시간 설정** | `EXPIRE` | `MinHeap` | **$O(\log M)$** | $O(\log M)$ | $M$ = TTL이 설정된 활성 키 개수 |
+| **만료 시간 설정** | `EXPIRE` | `MinHeap` | **$O(log M)$** | $O(log M)$ | $M$ = TTL이 설정된 활성 키 개수 |
 | **만료 키 감지** | `_clean_expired` | `MinHeap.peek()` | **$O(1)$** | $O(1)$ | 힙 루트의 최소 만료 시간만 즉시 대조 |
 | **채널 구독** | `SUBSCRIBE` | `HashMap` + `DoublyLinkedList` | **$O(1)$** | $O(C)$ | 채널 해시 탐색 후 연결 리스트 끝단 $O(1)$ 삽입 |
 | **메시지 발행** | `PUBLISH` | `DoublyLinkedList` + `Queue` | **$O(S)$** | $O(S)$ | $S$ = 해당 채널을 구독 중인 구독자 수 |

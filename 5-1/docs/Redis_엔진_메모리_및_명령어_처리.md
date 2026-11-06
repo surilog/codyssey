@@ -6,15 +6,15 @@
 
 ## 1. Mini-Redis 중앙 제어 엔진 (`mini_redis.py`)
 
-`mini_redis.py`는 스스로 모든 데이터를 직접 저장하지 않고, 하위의 3대 핵심 자료구조 객체를 지휘하여 데이터베이스의 핵심 연산을 $O(1)$ 및 $O(\log N)$에 완수합니다.
+`mini_redis.py`는 스스로 모든 데이터를 직접 저장하지 않고, 하위의 3대 핵심 자료구조 객체를 지휘하여 데이터베이스의 핵심 연산을 O(1) 및 O(log N)에 완수합니다.
 
 ```text
                ┌─────────────────────────────────────────┐
                │        Mini-Redis 중앙 관제 엔진         │
                └─────────────────────────────────────────┘
-                 /                  |                  \
+                 /                  |                  
        지시 1: 데이터 저장     지시 2: 캐시 신선도    지시 3: 만료시간 감시
-                /                   |                   \
+                /                   |                   
                ▼                    ▼                    ▼
      ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐
      │  1. HashMap (db) │ │2.DoublyList (lru)│ │ 3. MinHeap (ttl) │
@@ -24,13 +24,13 @@
      └──────────────────┘ └──────────────────┘ └──────────────────┘
 ```
 
-### 1) 왜 HashMap의 Value에 Node 포인터를 저장하는가? (LRU $O(1)$의 비밀)
-- 일반적인 큐나 배열로 LRU를 관리하면, 특정 키가 조회되었을 때 해당 키를 찾아 맨 앞으로 옮기기 위해 전체를 순회해야 하므로 **$O(N)$의 치명적 지연**이 발생합니다.
+### 1) 왜 HashMap의 Value에 Node 포인터를 저장하는가? (LRU O(1)의 비밀)
+- 일반적인 큐나 배열로 LRU를 관리하면, 특정 키가 조회되었을 때 해당 키를 찾아 맨 앞으로 옮기기 위해 전체를 순회해야 하므로 **O(N)의 치명적 지연**이 발생합니다.
 - Mini-Redis는 `HashMap`의 Value 자리에 단순 데이터 문자열이 아니라 **이중 연결 리스트의 `Node` 메모리 주소(참조)**를 저장합니다.
 - `GET` 요청 시:
-  1. `HashMap`에서 Key로 해당 노드 주소를 **$O(1)$**에 즉시 찾습니다.
-  2. `DoublyLinkedList.move_to_front(node)`를 호출하여 앞뒤 포인터만 재연결함으로써 **$O(1)$**만에 맨 앞으로 순간이동시킵니다.
-  3. **결과:** 검색과 캐시 순서 갱신 모두를 완벽한 **$O(1)$**에 완수합니다.
+  1. `HashMap`에서 Key로 해당 노드 주소를 **O(1)**에 즉시 찾습니다.
+  2. `DoublyLinkedList.move_to_front(node)`를 호출하여 앞뒤 포인터만 재연결함으로써 **O(1)**만에 맨 앞으로 순간이동시킵니다.
+  3. **결과:** 검색과 캐시 순서 갱신 모두를 완벽한 **O(1)**에 완수합니다.
 
 ---
 
@@ -39,7 +39,9 @@
 ### 1) 개수 제한에서 바이트 단위 모델로의 전환
 초기의 단순 키 개수 제한 방식에서 실제 Redis와 동일한 **UTF-8 바이트 단위 총 용량(`used_memory`) 추적 모델**로 전환했습니다.
 
-$$\text{used\_memory} = \sum \Big( \operatorname{len}(\operatorname{utf8}(key)) + \operatorname{len}(\operatorname{utf8}(value)) \Big)$$
+```text
+{used_memory} = sum Big( operatorname{len}(operatorname{utf8}(key)) + operatorname{len}(operatorname{utf8}(value)) Big)
+```
 
 ```python
 def _get_bytes(self, key: str, value: str) -> int:
@@ -49,10 +51,10 @@ def _get_bytes(self, key: str, value: str) -> int:
 
 ---
 
-### 2) LRU 캐시 강제 축출 (Eviction) 루프
+### 2) LRU 캐시 강제 추출 (Eviction) 루프
 - **발동 조건**: `maxmemory > 0 and used_memory > maxmemory`
 - **동작 흐름**:
-  1. `self.lru_list.remove_back()`을 호출해 가장 오랫동안 참조되지 않은 꼬리 노드(`dummy_tail.prev`)를 $O(1)$에 잘라냅니다.
+  1. `self.lru_list.remove_back()`을 호출해 가장 오랫동안 참조되지 않은 꼬리 노드(`dummy_tail.prev`)를 O(1)에 잘라냅니다.
   2. 축출된 노드의 바이트 크기를 가계부에서 차감합니다: `self.used_memory -= self._get_bytes(oldest_node.key, oldest_node.value)`
   3. `self.db.remove(oldest_node.key)`로 해시맵에서도 동기화하여 삭제합니다.
   4. `self.evicted_keys += 1` 카운터를 증가시킵니다.
@@ -60,7 +62,7 @@ def _get_bytes(self, key: str, value: str) -> int:
 
 ---
 
-### 3) 🛠️ 실전 트러블슈팅 포인트 (필기 노트 13, 14장 핵심)
+### 3)  실전 트러블슈팅 포인트 
 
 #### ① 단일 엔트리 OOM (Out Of Memory) 사전 방어
 - **문제 상황**: 새로 들어올 단일 데이터의 크기 자체가 `maxmemory` 한도보다 큰 경우 (`entry_bytes > self.maxmemory`).
@@ -122,7 +124,7 @@ def _clean_expired(self) -> None:
 ```
 
 ### 2) 힙 지연 무효화 (Lazy Invalidation) 전략
-- **배경**: 최소 힙의 루트 확인은 $O(1)$이지만, 힙 중간에 위치한 특정 키의 만료 시각을 수정하거나 삭제하려면 배열 전체를 선형 탐색해야 하므로 **$O(N)$의 치명적 병목**이 생깁니다.
+- **배경**: 최소 힙의 루트 확인은 O(1)이지만, 힙 중간에 위치한 특정 키의 만료 시각을 수정하거나 삭제하려면 배열 전체를 선형 탐색해야 하므로 **O(N)의 치명적 병목**이 생깁니다.
 - **해결책**:
   - `SET`으로 키가 덮어써지거나 `DEL`로 지워져도 힙 내부는 건드리지 않고 방치합니다.
   - 별도의 가계부 딕셔너리(`self.key_ttl[key] = 최신시각`)에만 적어둡니다.
@@ -155,8 +157,8 @@ def _clean_expired(self) -> None:
 ```
 
 ### 1) 왜 HashMap을 2개로 양방향 매핑했는가?
-1. **`self.channels`**: 특정 채널에 메시지를 발행(`publish`)할 때, 채널명을 키로 구독자 연결 리스트를 찾아 $O(1)$에 일제히 브로드캐스팅하기 위함.
-2. **`self.client_channels`**: 특정 클라이언트가 현재 구독 중인 채널 수(`chan_list.size`)를 $O(1)$에 파악하고, 구독 취소(`unsubscribe`) 시 역방향 전수 조사를 방지하기 위함.
+1. **`self.channels`**: 특정 채널에 메시지를 발행(`publish`)할 때, 채널명을 키로 구독자 연결 리스트를 찾아 O(1)에 일제히 브로드캐스팅하기 위함.
+2. **`self.client_channels`**: 특정 클라이언트가 현재 구독 중인 채널 수(`chan_list.size`)를 O(1)에 파악하고, 구독 취소(`unsubscribe`) 시 역방향 전수 조사를 방지하기 위함.
 
 ### 2) `curr` vs `curr.value` (택배 상자 비유)
 - 연결 리스트를 순회할 때 `curr`는 앞뒤 포인터(`prev`, `next`)를 가진 **포장 상자(Node)**입니다.
