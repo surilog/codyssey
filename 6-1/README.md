@@ -74,6 +74,80 @@ DBeaver: **새 연결 → SQLite → Path에 `mission.db` 선택** 후, 각 파�
 **인덱스 적용 이유:** "특정 회원의 대여 내역 / 대여 중인 도서" 조회(`WHERE member_id = ? AND status = ?`)와 member-rental JOIN이 자주 쓰이므로, 전체 스캔 대신 인덱스로 바로 찾기 위해 적용했습니다.
 `EXPLAIN QUERY PLAN`으로 `SEARCH rental USING INDEX idx_rental_member_status`가 나오는 것을 확인했습니다. ([`results/Q15_explain.txt`](results/Q15_explain.txt))
 
+### 실행 결과
+
+#### 기본 조회
+
+**Q1. 18,000원 이상 도서를 비싼 순으로** (WHERE + ORDER BY)
+
+![Q1](results/Q01.png)
+
+**Q2. 아직 반납되지 않은 대여 기록** (IS NULL)
+
+![Q2](results/Q02.png)
+
+**Q3. 가장 저렴한 도서 3권** (ORDER BY + LIMIT)
+
+![Q3](results/Q03.png)
+
+**Q4. 2025년 2월 이후 가입 회원을 이름순으로**
+
+![Q4](results/Q04.png)
+
+#### 조인
+
+**Q5. 도서 + 카테고리 이름** (INNER JOIN)
+
+![Q5](results/Q05.png)
+
+**Q6. 누가 어떤 책을 언제 빌렸는지** (INNER JOIN 3개 테이블) → 대여 기록이 있는 10행만
+
+![Q6](results/Q06.png)
+
+**Q7. 전체 카테고리와 소속 도서** (LEFT JOIN) → 도서가 없는 카테고리는 `NULL`
+
+![Q7](results/Q07.png)
+
+**Q8. 전체 회원과 대여 기록** (LEFT JOIN) → 대여 이력이 없는 장도윤, 한지민도 `NULL`로 포함되어 12행
+
+![Q8](results/Q08.png)
+
+#### 집계
+
+**Q9. 카테고리별 도서 수와 평균 가격** (COUNT, AVG + GROUP BY)
+
+![Q9](results/Q09.png)
+
+**Q10. 회원별 총 대여 횟수** (COUNT + GROUP BY + ORDER BY)
+
+![Q10](results/Q10.png)
+
+**Q11. 대여 상태별 건수** (COUNT + GROUP BY)
+
+![Q11](results/Q11.png)
+
+#### 서브쿼리
+
+**Q12. 전체 평균가보다 비싼 도서** (스칼라 서브쿼리)
+
+![Q12](results/Q12.png)
+
+#### 수정 / 삭제
+
+**Q13. 1번 회원의 5번 도서 반납 처리** (UPDATE) → `returned_at`이 채워지고 `status = 'RETURNED'`
+
+![Q13](results/Q13.png)
+
+**Q14. 대여 기록이 없는 9번 도서 삭제** (DELETE) → 검증 SELECT 결과 0행
+
+![Q14](results/Q14.png)
+
+#### 인덱스
+
+**Q15. `rental(member_id, status)` 복합 인덱스 생성** (CREATE INDEX) → `PRAGMA index_list`로 생성 확인
+
+![Q15](results/Q15.png)
+
 ---
 
 ## 5. 보너스 과제
@@ -93,7 +167,21 @@ DBeaver: **새 연결 → SQLite → Path에 `mission.db` 선택** 후, 각 파�
 - `NOT IN`은 서브쿼리 결과에 NULL이 하나라도 섞이면 에러 없이 0행을 반환합니다. (`SELECT 9 NOT IN (1, 2, NULL);` → `NULL`)
   이번에는 `rental.member_id`가 NOT NULL이라 문제가 없었지만, NULL 가능성이 있으면 `NOT EXISTS`가 안전합니다.
 
-캡처: `bonus1_join.png`, `bonus1_not_in.png`, `bonus1_not_exists.png`, `NOT_IN근거.png`
+**(1) LEFT JOIN + IS NULL**
+
+![보너스1 JOIN](results/bonus1_join.png)
+
+**(2) NOT IN**
+
+![보너스1 NOT IN](results/bonus1_not_in.png)
+
+**(3) NOT EXISTS**
+
+![보너스1 NOT EXISTS](results/bonus1_not_exists.png)
+
+**NOT IN과 NULL의 함정 근거:** `SELECT 9 NOT IN (1, 2, NULL);` → `NULL`
+
+![NOT IN 근거](results/NOT_IN근거.png)
 
 ### 보너스 2: 데이터 정합성 깨뜨려 보기
 
@@ -110,7 +198,27 @@ DBeaver: **새 연결 → SQLite → Path에 `mission.db` 선택** 후, 각 파�
 - 부모를 지우려면 그 부모를 가리키는 자식 행을 먼저 지워야 합니다.
 - SQLite는 `PRAGMA foreign_keys = OFF`(기본값)이면 위 B1~B3이 **에러 없이 들어가 버립니다.** 실제로 실험 중 고아 데이터가 생겼고, B5로 찾아서 정리했습니다.
 
-캡처: `B1_error.png` ~ `B4_error.png`, `B5_after.png` / 텍스트: [`results/bonus_fk.txt`](results/bonus_fk.txt)
+**B1. 없는 회원(999)으로 대여 기록 입력** → FOREIGN KEY 에러
+
+![B1](results/B1_error.png)
+
+**B2. 없는 카테고리(99)로 도서 입력** → FOREIGN KEY 에러
+
+![B2](results/B2_error.png)
+
+**B3. 대여 기록이 있는 1번 도서 삭제** → FOREIGN KEY 에러
+
+![B3](results/B3_error.png)
+
+**B4. status 오타 입력** → CHECK 에러
+
+![B4](results/B4_error.png)
+
+**B5. 고아 데이터 정리 후** `PRAGMA foreign_key_check` → 0행
+
+![B5](results/B5_after.png)
+
+텍스트 결과: [`results/bonus_fk.txt`](results/bonus_fk.txt)
 
 ### 보너스 3: 미니 리포트 (핵심 지표 3개)
 
@@ -123,7 +231,17 @@ DBeaver: **새 연결 → SQLite → Path에 `mission.db` 선택** 후, 각 파�
 - **연체 정의:** `status = 'RENTED'`이면서 대여 후 7일 초과
 - 날짜 차이는 `JULIANDAY('now') - JULIANDAY(rented_at)`로 계산 **[SQLite 전용]**
 
-캡처: `report1.png` ~ `report3.png`
+**지표 1. 인기 도서 TOP 3**
+
+![지표1](results/report1.png)
+
+**지표 2. 카테고리별 대여 건수**
+
+![지표2](results/report2.png)
+
+**지표 3. 연체 중인 회원 목록**
+
+![지표3](results/report3.png)
 
 ---
 
