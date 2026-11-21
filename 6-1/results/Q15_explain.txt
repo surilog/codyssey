@@ -1,0 +1,2 @@
+-- Q15 검증 2: EXPLAIN QUERY PLAN SELECT * FROM rental WHERE member_id = 1 AND status = 'RENTED';
+   SEARCH rental USING INDEX idx_rental_member_status (member_id=? AND status=?)

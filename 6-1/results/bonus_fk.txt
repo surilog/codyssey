@@ -1,0 +1,20 @@
+PRAGMA foreign_keys = ON;
+
+-- B1. 존재하지 않는 회원(999)으로 대여 기록 입력
+INSERT INTO rental (member_id, book_id, rented_at, status)
+VALUES (999, 1, '2025-04-01 10:00:00', 'RENTED');
+=> ERROR: FOREIGN KEY constraint failed
+
+-- B2. 존재하지 않는 카테고리(99)로 도서 입력
+INSERT INTO book (category_id, title, author, price, published_date)
+VALUES (99, '없는 카테고리 책', '홍길동', 10000, '2024-01-01');
+=> ERROR: FOREIGN KEY constraint failed
+
+-- B3. 대여 기록이 있는 1번 도서 삭제
+DELETE FROM book WHERE id = 1;
+=> ERROR: FOREIGN KEY constraint failed
+
+-- B4. 허용되지 않은 status 값(오타) 입력
+INSERT INTO rental (member_id, book_id, rented_at, status)
+VALUES (1, 1, '2025-04-01 10:00:00', 'RETRUNED');
+=> ERROR: CHECK constraint failed: status IN ('RENTED', 'RETURNED')

@@ -1,0 +1,36 @@
+// 도서 대여 시스템 ERD (SQLite) — dbdiagram.io에 붙여넣으면 ERD가 그려진다
+Table category {
+  id integer [pk, increment]
+  name text [not null, unique]
+}
+
+Table member {
+  id integer [pk, increment]
+  email text [not null, unique]
+  name text [not null]
+  phone text
+  created_at datetime [not null, default: `CURRENT_TIMESTAMP`]
+}
+
+Table book {
+  id integer [pk, increment]
+  category_id integer [not null]
+  title text [not null]
+  author text [not null]
+  price integer [not null]
+  published_date date [not null]
+}
+
+Table rental {
+  id integer [pk, increment]
+  member_id integer [not null]
+  book_id integer [not null]
+  rented_at datetime [not null]
+  returned_at datetime
+  status text [not null, note: 'RENTED | RETURNED']
+}
+
+// 1:N 관계 (> = N쪽에서 1쪽을 참조)
+Ref: book.category_id > category.id
+Ref: rental.member_id > member.id
+Ref: rental.book_id > book.id
